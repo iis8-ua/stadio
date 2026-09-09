@@ -1,3 +1,4 @@
 .opencode/cache/
 .opencode/*.local.*
 .specify/**/*.tmp
+.vscode
