@@ -1,0 +1,217 @@
+@startuml
+' === STADIO - Diagrama entidad-relación ===
+left to right direction
+skinparam defaultFontName "Arial"
+skinparam linetype ortho
+
+' ---------- Usuarios ----------
+entity "users" as users {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  email : varchar UNIQUE
+  hash_contrasena : varchar
+  telefono : varchar
+  rol : enum <Rol>
+  estado : enum <EstadoUsuario>
+  fecha_alta : date
+  identificador_pulsera : varchar UNIQUE
+}
+
+entity "clientes" as clientes {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  fecha_nacimiento : date
+  objetivo : varchar
+  peso : decimal
+  rutina_id : bigint FK
+}
+
+entity "entrenadores" as entrenadores {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  especialidad : varchar
+  horario_semanal : text
+  disponibilidad : text
+}
+
+' ---------- Rutinas y ejercicios ----------
+entity "rutinas" as rutinas {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  objetivo : varchar
+  dias_semana : int
+  entrenador_id : bigint FK
+}
+
+entity "ejercicios" as ejercicios {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  grupo_muscular : varchar
+  descripcion : text
+}
+
+entity "rutina_ejercicio" as re {
+  * id : bigint PK
+  ---
+  rutina_id : bigint FK
+  ejercicio_id : bigint FK
+  series : int
+  repeticiones : varchar
+  peso : decimal
+  descanso : int
+  rir : int
+  rpe : int
+}
+
+' ---------- Entrenamientos ----------
+entity "entrenamientos" as ent {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  rutina_id : bigint FK
+  fecha : datetime
+  duracion : int
+  estado : enum <EstadoEntrenamiento>
+  volumen_total : decimal
+}
+
+entity "series" as series {
+  * id : bigint PK
+  ---
+  entrenamiento_id : bigint FK
+  ejercicio_id : bigint FK
+  numero_serie : int
+  peso : decimal
+  repeticiones : int
+  rir : int
+  rpe : int
+  descanso : int
+  notas : text
+}
+
+' ---------- Clases y reservas ----------
+entity "clases" as clases {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  descripcion : text
+  fecha_hora : datetime
+  duracion : int
+  capacidad : int
+  sala_id : bigint FK
+  entrenador_id : bigint FK
+}
+
+entity "salas" as salas {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  capacidad : int
+}
+
+entity "reservas" as reservas {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  clase_id : bigint FK
+  fecha_reserva : datetime
+  estado : enum <EstadoReserva>
+}
+
+' ---------- Accesos y cuotas ----------
+entity "accesos" as accesos {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  timestamp : datetime
+  tipo : enum <TipoAcceso>
+  metodo : enum <MetodoAcceso>
+}
+
+entity "cuotas" as cuotas {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  periodo : varchar
+  importe : decimal
+  estado : enum <EstadoCuota>
+  fecha_pago : date
+  metodo : enum <MetodoPago>
+  ref_transaccion : varchar
+}
+
+' ---------- Instalaciones ----------
+entity "equipos" as equipos {
+  * id : bigint PK
+  ---
+  sala_id : bigint FK
+  nombre : varchar
+  estado : enum <EstadoEquipo>
+  fecha_ultimo_mantenimiento : date
+}
+
+entity "incidencias" as incidencias {
+  * id : bigint PK
+  ---
+  equipo_id : bigint FK
+  reportado_por : bigint FK
+  descripcion : text
+  tipo : enum <TipoIncidencia>
+  estado : varchar
+  fecha : datetime
+}
+
+' ---------- IA y notificaciones ----------
+entity "mensajes_chatbot" as chatbot {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  texto_usuario : text
+  texto_respuesta : text
+  fecha : datetime
+}
+
+entity "notificaciones" as notif {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  texto : varchar
+  leido : bool
+  fecha : datetime
+}
+
+' ---------- Relaciones ----------
+users ||--|| clientes : tiene (1:1)
+users ||--|| entrenadores : tiene (1:1)
+
+clientes }o--|| rutinas : "rutina asignada"
+entrenadores }o--|| rutinas : "crea"
+rutinas ||--o{ re : contiene
+ejercicios ||--o{ re : contiene
+
+entrenamientos }o--|| clientes : "de"
+entrenamientos }o--|| rutinas : "sigue"
+series }o--|| entrenamientos : "pertenece"
+series }o--|| ejercicios : "sobre"
+
+clases }o--|| entrenadores : "imparte"
+clases }o--|| salas : "en"
+reservas }o--|| clientes : "del"
+reservas }o--|| clases : "para"
+
+accesos }o--|| users : "de"
+cuotas }o--|| clientes : "de"
+
+equipos }o--|| salas : "en"
+incidencias }o--|| equipos : "sobre"
+incidencias }o--|| users : "reportada por"
+
+chatbot }o--|| clientes : "de"
+notif }o--|| users : "para"
+
+@enduml

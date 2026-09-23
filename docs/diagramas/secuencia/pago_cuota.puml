@@ -1,0 +1,59 @@
+@startuml
+' === STADIO - Secuencia: Pago de la cuota mensual ===
+skinparam defaultFontName "Arial"
+
+actor "Cliente" as Cliente
+participant "Frontend SPA" as FE
+participant "API Laravel" as API
+participant "Gestor de Cuotas" as CUOTAS
+participant "Stripe" as STRIPE
+database "MySQL" as DB
+participant "Scheduler (Job diario)" as JOB
+
+== Pago puntual con tarjeta (pasarela) ==
+Cliente -> FE : Pulsa [PAGAR CUOTA]
+FE -> API : POST /api/cuotas/{periodo}/pagar
+API -> CUOTAS : iniciarPago(cliente, periodo)
+CUOTAS -> DB : Consultar cuota del periodo
+DB --> CUOTAS : cuota
+
+alt Cuota ya pagada
+  CUOTAS --> API : Error 409 "Cuota ya pagada"
+  API --> FE : 409
+  FE --> Cliente : Toast de error (RF-59)
+else Cuota pendiente
+  CUOTAS -> STRIPE : Crear PaymentIntent (importe, tarjeta)
+  STRIPE --> CUOTAS : clientSecret
+  CUOTAS --> API : clientSecret
+  API --> FE : clientSecret
+  FE -> STRIPE : Confirmar pago (Stripe Elements)
+  STRIPE --> FE : Pago confirmado
+  FE -> API : Confirmación de cobro (refTransaccion)
+  API -> CUOTAS : confirmarPago(refTransaccion)
+  CUOTAS -> STRIPE : Verificar PaymentIntent
+  STRIPE --> CUOTAS : pagado
+  CUOTAS -> DB : UPDATE cuota = pagada, fecha de pago (RF-56, RF-58)
+  DB --> CUOTAS : ok
+  CUOTAS --> API : Cuota pagada
+  API --> FE : 200
+  FE --> Cliente : "Cuota pagada" + historial
+end
+
+== Cobro automático por domiciliación ==
+JOB -> CUOTAS : procesarVencimientos(fecha) (RF-57)
+CUOTAS -> DB : Cuotas pendientes de clientes con cuenta bancaria
+DB --> CUOTAS : lista de cuotas
+loop por cada cuota vencida
+  CUOTAS -> STRIPE : Cargo por domiciliación (SEPA)
+  alt Cobro correcto
+    STRIPE --> CUOTAS : cobrado
+    CUOTAS -> DB : UPDATE cuota = pagada
+    CUOTAS --> : Notificación al cliente
+  else Cobro fallido
+    STRIPE --> CUOTAS : error
+    CUOTAS -> DB : Cuota sigue pendiente
+    CUOTAS --> : Notificación de impago
+  end
+end
+
+@enduml

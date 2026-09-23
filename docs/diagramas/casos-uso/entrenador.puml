@@ -1,0 +1,50 @@
+@startuml
+' === STADIO - Casos de uso: ENTRENADOR ===
+left to right direction
+skinparam actorStyle awesome
+skinparam defaultFontName "Arial"
+
+actor "Entrenador" as Trainer
+
+rectangle "STADIO" {
+  usecase "Iniciar sesión" as UC_Login
+  usecase "Ver dashboard" as UC_Dash
+  usecase "Consultar clientes asignados" as UC_Clientes
+  usecase "Ver ficha de cliente" as UC_Ficha
+  usecase "Crear rutina" as UC_CrearR
+  usecase "Editar rutina" as UC_EditarR
+  usecase "Asignar rutina a cliente" as UC_Asignar
+  usecase "Buscar ejercicio" as UC_Buscar
+  usecase "Añadir ejercicio a la biblioteca" as UC_AddEx
+  usecase "Ver clases del día" as UC_Clases
+  usecase "Ver horario" as UC_Horario
+  usecase "Editar perfil" as UC_Perfil
+}
+
+Trainer --> UC_Login
+Trainer --> UC_Dash
+Trainer --> UC_Clientes
+Trainer --> UC_Ficha
+Trainer --> UC_CrearR
+Trainer --> UC_EditarR
+Trainer --> UC_Asignar
+Trainer --> UC_Buscar
+Trainer --> UC_AddEx
+Trainer --> UC_Clases
+Trainer --> UC_Horario
+Trainer --> UC_Perfil
+
+note top of Trainer
+  Sesión iniciada con rol ENTRENADOR.
+  Solo opera sobre sus clientes asignados
+  y sus clases (RF-05, RF-16).
+end note
+
+UC_Dash .> UC_Login : <<include>>
+UC_Ficha .> UC_Clientes : <<include>>
+UC_Asignar .> UC_Clientes : <<include>>
+UC_CrearR .> UC_Buscar : <<include>>
+UC_EditarR .> UC_Buscar : <<include>>
+UC_Asignar .> UC_CrearR : <<include>>
+
+@enduml

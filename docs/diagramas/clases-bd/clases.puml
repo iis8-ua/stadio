@@ -1,0 +1,240 @@
+@startuml
+' === STADIO - Diagrama de clases (dominio) ===
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Arial"
+skinparam classFontSize 12
+
+' ---------- Enumerados ----------
+enum Rol {
+  CLIENTE
+  ENTRENADOR
+  ADMINISTRADOR
+}
+enum EstadoUsuario {
+  ACTIVO
+  DESACTIVADO
+}
+enum EstadoReserva {
+  CONFIRMADA
+  CANCELADA
+}
+enum TipoAcceso {
+  ENTRADA
+  SALIDA
+}
+enum MetodoAcceso {
+  TORNO
+  PULSERA_NFC
+  MANUAL
+}
+enum EstadoCuota {
+  PAGADA
+  PENDIENTE
+}
+enum MetodoPago {
+  TARJETA
+  DOMICILIACION
+}
+enum EstadoEquipo {
+  DISPONIBLE
+  MANTENIMIENTO
+  FUERA_DE_SERVICIO
+}
+enum TipoIncidencia {
+  MANTENIMIENTO
+  INCIDENCIA
+}
+
+' ---------- Usuarios ----------
+class Usuario {
+  - id : Long
+  - nombre : String
+  - email : String
+  - hashContrasena : String
+  - telefono : String
+  - rol : Rol
+  - estado : EstadoUsuario
+  - fechaAlta : Date
+  - identificadorPulsera : String
+}
+
+class Cliente {
+  - id : Long
+  - fechaNacimiento : Date
+  - objetivo : String
+  - peso : Double
+  + verProgreso()
+  + reservarClase()
+  + registrarSerie()
+}
+
+class Entrenador {
+  - id : Long
+  - especialidad : String
+  - horarioSemanal : String
+  - disponibilidad : String
+  + crearRutina()
+  + asignarRutina(cliente, rutina)
+  + gestionarClase()
+}
+
+note top of Usuario
+  El rol ADMINISTRADOR no requiere clase propia:
+  gestiona todos los módulos y da de alta a
+  clientes y empleados (RF-04).
+end note
+
+' ---------- Rutinas y ejercicios ----------
+class Rutina {
+  - id : Long
+  - nombre : String
+  - objetivo : String
+  - diasSemana : int
+}
+
+class Ejercicio {
+  - id : Long
+  - nombre : String
+  - grupoMuscular : String
+  - descripcion : String
+}
+
+class RutinaEjercicio {
+  - id : Long
+  - series : int
+  - repeticiones : String
+  - peso : Double
+  - descanso : int
+  - rir : int
+  - rpe : int
+}
+
+' ---------- Entrenamiento ----------
+class Entrenamiento {
+  - id : Long
+  - fecha : LocalDateTime
+  - duracion : int
+  - estado : String
+  - volumenTotal : Double
+  + finalizar()
+  + calcularVolumen()
+}
+
+class Serie {
+  - id : Long
+  - numeroSerie : int
+  - peso : Double
+  - repeticiones : int
+  - rir : int
+  - rpe : int
+  - descanso : int
+  - notas : String
+}
+
+' ---------- Clases y reservas ----------
+class Clase {
+  - id : Long
+  - nombre : String
+  - descripcion : String
+  - fechaHora : LocalDateTime
+  - duracion : int
+  - capacidad : int
+}
+
+class Sala {
+  - id : Long
+  - nombre : String
+  - capacidad : int
+}
+
+class Reserva {
+  - id : Long
+  - fecha : LocalDateTime
+  - estado : EstadoReserva
+  + cancelar()
+  + confirmar()
+}
+
+' ---------- Accesos ----------
+class Acceso {
+  - id : Long
+  - timestamp : LocalDateTime
+  - tipo : TipoAcceso
+  - metodo : MetodoAcceso
+}
+
+' ---------- Cuotas y pagos ----------
+class Cuota {
+  - id : Long
+  - periodo : String
+  - importe : Double
+  - estado : EstadoCuota
+  - fechaPago : Date
+  - metodo : MetodoPago
+  - refTransaccion : String
+  + marcarPagada()
+}
+
+' ---------- Instalaciones ----------
+class Equipo {
+  - id : Long
+  - nombre : String
+  - estado : EstadoEquipo
+  - fechaUltimoMantenimiento : Date
+}
+
+class Incidencia {
+  - id : Long
+  - descripcion : String
+  - tipo : TipoIncidencia
+  - estado : String
+  - fecha : LocalDateTime
+}
+
+' ---------- Chatbot y notificaciones ----------
+class MensajeChatbot {
+  - id : Long
+  - textoUsuario : String
+  - textoRespuesta : String
+  - fecha : LocalDateTime
+}
+
+class Notificacion {
+  - id : Long
+  - texto : String
+  - leido : boolean
+  - fecha : LocalDateTime
+}
+
+' ---------- Relaciones ----------
+Cliente "1" --> "1" Usuario : usuario
+Entrenador "1" --> "1" Usuario : usuario
+
+Rutina "1" <-- "0..*" Entrenador : creadaPor
+Rutina "1" <-- "0..*" Cliente : asignadaA
+Rutina "1" -- "1..*" RutinaEjercicio : contiene
+Ejercicio "1" -- "1..*" RutinaEjercicio : asocia
+
+Entrenamiento "0..*" --> "1" Cliente : cliente
+Entrenamiento "0..*" --> "1" Rutina : rutina
+Serie "0..*" --> "1" Entrenamiento : entrenamiento
+Serie "0..*" --> "1" Ejercicio : ejercicio
+
+Clase "0..*" --> "1" Sala : sala
+Clase "0..*" --> "1" Entrenador : entrenador
+Reserva "0..*" --> "1" Cliente : cliente
+Reserva "0..*" --> "1" Clase : clase
+
+Acceso "0..*" --> "1" Usuario : usuario
+
+Cuota "0..*" --> "1" Cliente : cliente
+
+Equipo "0..*" --> "1" Sala : sala
+Incidencia "0..*" --> "1" Equipo : equipo
+Incidencia "0..*" --> "1" Usuario : reportadaPor
+
+MensajeChatbot "0..*" --> "1" Cliente : cliente
+Notificacion "0..*" --> "1" Usuario : destinatario
+
+@enduml

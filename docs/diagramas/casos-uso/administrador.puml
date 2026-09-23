@@ -1,0 +1,65 @@
+@startuml
+' === STADIO - Casos de uso: ADMINISTRADOR ===
+left to right direction
+skinparam actorStyle awesome
+skinparam defaultFontName "Arial"
+
+actor "Administrador" as Admin
+
+rectangle "STADIO" {
+  usecase "Iniciar sesión" as UC_Login
+  usecase "Ver dashboard" as UC_Dash
+  usecase "Dar de alta clientes" as UC_AltaCl
+  usecase "Editar / desactivar clientes" as UC_EditCl
+  usecase "Asignar pulsera NFC a cliente" as UC_NFC
+  usecase "Gestionar empleados" as UC_Empleados
+  usecase "Crear / editar / eliminar clases" as UC_Clases
+  usecase "Asignar entrenador y sala a una clase" as UC_AsignarCl
+  usecase "Consultar reservas y ocupación" as UC_Reservas
+  usecase "Gestionar cuotas" as UC_Cuotas
+  usecase "Registrar pago manual" as UC_PagoMan
+  usecase "Registrar acceso manual" as UC_AccMan
+  usecase "Gestionar salas y equipos" as UC_Instal
+  usecase "Registrar incidencia / mantenimiento" as UC_Inc
+  usecase "Consultar analítica" as UC_Analitica
+  usecase "Consultar insights IA" as UC_IA
+  usecase "Configurar el gimnasio" as UC_Conf
+  usecase "Gestionar integraciones" as UC_Integ
+}
+
+Admin --> UC_Login
+Admin --> UC_Dash
+Admin --> UC_AltaCl
+Admin --> UC_EditCl
+Admin --> UC_NFC
+Admin --> UC_Empleados
+Admin --> UC_Clases
+Admin --> UC_AsignarCl
+Admin --> UC_Reservas
+Admin --> UC_Cuotas
+Admin --> UC_PagoMan
+Admin --> UC_AccMan
+Admin --> UC_Instal
+Admin --> UC_Inc
+Admin --> UC_Analitica
+Admin --> UC_IA
+Admin --> UC_Conf
+Admin --> UC_Integ
+
+note top of Admin
+  Sesión iniciada con rol ADMINISTRADOR.
+  Único actor autorizado para dar de alta
+  usuarios (RF-04) y gestionar el conjunto
+  del gimnasio (RF-05).
+end note
+
+UC_Dash .> UC_Login : <<include>>
+UC_AltaCl .> UC_Login : <<include>>
+UC_EditCl .> UC_AltaCl : <<extend>>
+UC_NFC .> UC_AltaCl : <<extend>>
+UC_AsignarCl .> UC_Clases : <<include>>
+UC_Inc .> UC_Instal : <<include>>
+UC_PagoMan .> UC_Cuotas : <<extend>>
+UC_Integ .> UC_Conf : <<extend>>
+
+@enduml

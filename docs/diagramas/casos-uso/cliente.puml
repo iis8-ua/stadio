@@ -1,0 +1,63 @@
+@startuml
+' === STADIO - Casos de uso: CLIENTE ===
+left to right direction
+skinparam actorStyle awesome
+skinparam defaultFontName "Arial"
+
+actor "Cliente" as Cliente
+
+rectangle "STADIO" {
+  usecase "Iniciar sesión" as UC_Login
+  usecase "Recuperar contraseña" as UC_Pass
+  usecase "Ver dashboard" as UC_Dash
+  usecase "Ver mi rutina" as UC_Rutina
+  usecase "Iniciar entrenamiento" as UC_Start
+  usecase "Registrar serie" as UC_Serie
+  usecase "Finalizar entrenamiento" as UC_End
+  usecase "Ver progreso" as UC_Prog
+  usecase "Ver análisis inteligente (IA)" as UC_IA
+  usecase "Consultar chatbot" as UC_Bot
+  usecase "Reservar clase" as UC_Res
+  usecase "Cancelar reserva" as UC_Cancel
+  usecase "Ver mis reservas" as UC_MisRes
+  usecase "Ver mis accesos" as UC_Acc
+  usecase "Ver aforo en tiempo real" as UC_Aforo
+  usecase "Ver mi cuota e historial" as UC_Cuota
+  usecase "Pagar cuota (pasarela)" as UC_Pay
+  usecase "Editar perfil" as UC_Perfil
+}
+
+Cliente --> UC_Login
+Cliente --> UC_Pass
+Cliente --> UC_Dash
+Cliente --> UC_Rutina
+Cliente --> UC_Start
+Cliente --> UC_Serie
+Cliente --> UC_End
+Cliente --> UC_Prog
+Cliente --> UC_IA
+Cliente --> UC_Bot
+Cliente --> UC_Res
+Cliente --> UC_Cancel
+Cliente --> UC_MisRes
+Cliente --> UC_Acc
+Cliente --> UC_Aforo
+Cliente --> UC_Cuota
+Cliente --> UC_Pay
+Cliente --> UC_Perfil
+
+' Precondición común (RF-05)
+note top of Cliente
+  Todo caso de uso requiere sesión iniciada
+  y solo permite operar sobre datos propios (RF-05).
+end note
+
+' Relaciones include
+UC_Dash .> UC_Login : <<include>>
+UC_Res .> UC_Login : <<include>>
+UC_Serie .> UC_Start : <<include>>
+UC_End .> UC_Start : <<include>>
+UC_Pay .> UC_Cuota : <<include>>
+UC_Pass .> UC_Login : <<extend>>
+
+@enduml
