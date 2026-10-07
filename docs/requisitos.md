@@ -255,25 +255,4 @@ Documento de requisitos funcionales y no funcionales derivado de `docs/especific
 
 ---
 
-# III. Resumen de prioridades por módulo
 
-| Módulo | Must | Should | Could |
-|--------|------|--------|-------|
-| Autenticación y usuarios | 5 | 4 | 0 |
-| Gestión de clientes | 6 | 1 | 0 |
-| Gestión de empleados | 2 | 1 | 1 |
-| Clases | 4 | 1 | 0 |
-| Reservas | 5 | 1 | 0 |
-| Rutinas y ejercicios | 5 | 2 | 0 |
-| Entrenamiento activo | 5 | 1 | 0 |
-| Progreso | 0 | 3 | 1 |
-| Control de accesos | 4 | 1 | 1 |
-| Cuotas y pagos | 6 | 1 | 2 |
-| Instalaciones | 0 | 4 | 0 |
-| Analítica | 0 | 4 | 1 |
-| IA heurística | 0 | 3 | 0 |
-| Chatbot | 0 | 2 | 0 |
-| Configuración | 2 | 2 | 1 |
-| Dashboards y experiencia | 3 | 3 | 2 |
-
-**Secuencia de implementación sugerida**: primero todos los *Must* (base funcional: usuarios, clientes, clases, reservas, rutinas, entrenamiento, accesos, cuotas y dashboards), después los *Should* (progreso, instalaciones, analítica, IA, chatbot, configuración avanzada) y por último los *Could* (comparativas, exportación de informes, registro manual de accesos).

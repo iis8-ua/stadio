@@ -12,7 +12,7 @@ La aplicación se organiza en torno a tres roles con interfaces y permisos difer
 - **Entrenador**: gestiona sus clientes, crea y asigna rutinas, imparte clases y hace seguimiento del progreso.
 - **Administrador**: controla la operativa completa del negocio (personas, ingresos, instalaciones, análisis).
 
-Quedan fuera del alcance las funcionalidades que no forman parte de la gestión de un gimnasio con esta estructura de roles: redes sociales, marketplace o contenido comunitario, así como aplicaciones móviles nativas (el acceso se realiza desde el navegador, con diseño responsive).
+Quedan fuera del alcance las funcionalidades que no forman parte de la gestión de un gimnasio con esta estructura de roles: redes sociales, marketplace o contenido comunitario.
 
 ## 2. Roles y tipos de usuario
 
@@ -164,13 +164,4 @@ Mensaje_chatbot: id, texto_usuario, texto_respuesta, fecha
 
 Relaciones principales entre las entidades de dominio (sin contar Usuario): un **cliente** tiene asignada una **rutina**, que agrupa **ejercicios**; los **entrenamientos** registran **series** de ejercicios y pertenecen al cliente; un **cliente** hace **reservas** de **clases**, que se imparten en **salas**; los **accesos** se asocian al usuario y alimentan el aforo; cada **cliente** mantiene una **cuota** mensual; las **incidencias** afectan a los **equipos** ubicados en **salas**.
 
-## 9. Fuera de alcance y futuras líneas
 
-Quedan fuera de esta versión:
-
-- Aplicaciones móviles nativas (plataforma web responsive únicamente).
-- Planes de membresía diferenciados (Premium, Estándar...) o bonos: existe una única cuota mensual.
-- Lista de espera y asistencia obligatoria en reservas.
-- Integración con sistemas de pago distintos de la pasarela contemplada, y pasarelas de pago internacionales.
-
-Como líneas futuras se plantea: el despliegue en producción con el sistema de tornos real del centro, autenticación con factor adicional o SSO, y ampliación del análisis inteligente y del chatbot con modelos de aprendizaje automático.

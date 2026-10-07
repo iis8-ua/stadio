@@ -13,7 +13,7 @@
 ## Backend
 
 - **Laravel 13 (PHP 8.3)**: API REST con autenticación, reglas de negocio, permisos por rol y validación.
-- **MySQL**: base de datos (con `.sqlite` disponible para pruebas locales).
+- **MySQL**: base de datos
 - **Docker + docker-compose**: contenedores para el backend (PHP-FPM + Nginx + MySQL) y despliegue reproducible.
 
 ## Integraciones externas
