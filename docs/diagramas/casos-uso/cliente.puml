@@ -24,6 +24,7 @@ rectangle "STADIO" {
   usecase "Ver aforo en tiempo real" as UC_Aforo
   usecase "Ver mi cuota e historial" as UC_Cuota
   usecase "Pagar cuota (pasarela)" as UC_Pay
+  usecase "Contratar entrenador personal" as UC_Trainer
   usecase "Editar perfil" as UC_Perfil
 }
 
@@ -44,6 +45,7 @@ Cliente --> UC_Acc
 Cliente --> UC_Aforo
 Cliente --> UC_Cuota
 Cliente --> UC_Pay
+Cliente --> UC_Trainer
 Cliente --> UC_Perfil
 
 ' Precondición común (RF-05)

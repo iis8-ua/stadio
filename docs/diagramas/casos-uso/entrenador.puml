@@ -13,11 +13,13 @@ rectangle "STADIO" {
   usecase "Ver ficha de cliente" as UC_Ficha
   usecase "Crear rutina" as UC_CrearR
   usecase "Editar rutina" as UC_EditarR
-  usecase "Asignar rutina a cliente" as UC_Asignar
+  usecase "Planificar rutinas por días" as UC_Asignar
   usecase "Buscar ejercicio" as UC_Buscar
   usecase "Añadir ejercicio a la biblioteca" as UC_AddEx
   usecase "Ver clases del día" as UC_Clases
-  usecase "Ver horario" as UC_Horario
+  usecase "Editar materiales de clase" as UC_Mat
+  usecase "Ver agenda semanal" as UC_Horario
+  usecase "Ver análisis y coaching (IA)" as UC_IA
   usecase "Editar perfil" as UC_Perfil
 }
 
@@ -31,7 +33,9 @@ Trainer --> UC_Asignar
 Trainer --> UC_Buscar
 Trainer --> UC_AddEx
 Trainer --> UC_Clases
+Trainer --> UC_Mat
 Trainer --> UC_Horario
+Trainer --> UC_IA
 Trainer --> UC_Perfil
 
 note top of Trainer
@@ -46,5 +50,6 @@ UC_Asignar .> UC_Clientes : <<include>>
 UC_CrearR .> UC_Buscar : <<include>>
 UC_EditarR .> UC_Buscar : <<include>>
 UC_Asignar .> UC_CrearR : <<include>>
+UC_Mat .> UC_Clases : <<include>>
 
 @enduml

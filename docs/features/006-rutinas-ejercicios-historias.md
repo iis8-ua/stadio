@@ -1,7 +1,7 @@
 Feature 006 — Rutinas y ejercicios
 Descripción
 
-Esta funcionalidad permite gestionar la biblioteca de ejercicios y las rutinas de entrenamiento, así como asignarlas a los clientes.
+Esta funcionalidad permite gestionar la biblioteca de ejercicios y las rutinas de entrenamiento, así como planificarlas para los clientes.
 
 HU-01 — Consultar la biblioteca de ejercicios
 
@@ -47,9 +47,9 @@ Criterios de aceptación:
 El entrenador puede indicar el nombre de la rutina.
 Puede indicar el objetivo y los días por semana.
 Puede añadir ejercicios de la biblioteca.
-Puede establecer series, repeticiones, peso, descanso y RIR/RPE.
+Puede establecer series individuales, cada una con su propio peso, repeticiones, descanso y RIR/RPE.
 La rutina se guarda cuando los datos son válidos.
-Una rutina creada queda disponible para su posterior asignación o edición.
+Una rutina creada queda disponible en la biblioteca para su posterior planificación o edición.
 HU-04 — Editar una rutina
 
 Como entrenador,
@@ -63,13 +63,13 @@ Criterios de aceptación:
 
 El entrenador puede modificar los datos generales de la rutina.
 Puede modificar los ejercicios incluidos.
-Puede modificar las series, repeticiones, peso, descanso y RIR/RPE.
+Puede modificar las series individuales de cada ejercicio (peso, repeticiones, descanso y RIR/RPE).
 Los cambios quedan guardados cuando son válidos.
-HU-05 — Asignar una rutina a un cliente
+HU-05 — Planificar la rutina de un cliente por días
 
 Como entrenador,
-quiero asignar una rutina a un cliente,
-para que pueda seguir el entrenamiento que le corresponde.
+quiero planificar las rutinas de un cliente en un calendario semanal, asignando una rutina a días concretos,
+para que el cliente entrene la rutina que corresponde a cada día.
 
 Requisito: RF-35
 Prioridad: Must
@@ -77,23 +77,24 @@ Prioridad: Must
 Criterios de aceptación:
 
 El entrenador puede seleccionar un cliente.
-Puede seleccionar una rutina.
-La rutina queda asociada al cliente.
-El cliente puede consultar posteriormente la rutina asignada.
-HU-06 — Cambiar la rutina de un cliente
+Puede seleccionar una rutina de su biblioteca.
+Puede asignar esa rutina a un día concreto en un calendario semanal.
+Cada día puede tener una rutina asignada o quedar libre.
+El cliente puede consultar posteriormente su planificación.
+HU-06 — Cambiar la rutina de un día
 
 Como entrenador,
-quiero cambiar la rutina asignada a un cliente,
-para adaptar su entrenamiento a su evolución y objetivos.
+quiero cambiar o quitar la rutina asignada a un día concreto,
+para adaptar el entrenamiento del cliente a su evolución y objetivos.
 
 Requisito: RF-35
 Prioridad: Must
 
 Criterios de aceptación:
 
-El entrenador puede consultar la rutina actualmente asignada.
-Puede seleccionar una nueva rutina.
-La nueva rutina sustituye a la anterior como rutina activa.
+El entrenador puede consultar la planificación de la semana.
+Puede cambiar la rutina de un día por otra de su biblioteca.
+Puede dejar un día sin rutina.
 El cambio queda reflejado para el cliente.
 HU-07 — Consultar mi rutina asignada
 
@@ -107,9 +108,9 @@ Prioridad: Must
 Criterios de aceptación:
 
 El cliente puede consultar su rutina activa.
-Puede ver el objetivo y los días por semana.
+Puede ver la planificación de los días con rutina asignada.
 Puede consultar los ejercicios incluidos.
-Puede consultar series, repeticiones, peso, descanso y RIR/RPE cuando estén definidos.
+Puede consultar cada serie con su propio peso, repeticiones, descanso y RIR/RPE.
 HU-08 — Añadir un ejercicio a la biblioteca
 
 Como entrenador,

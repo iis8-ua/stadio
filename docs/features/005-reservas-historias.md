@@ -105,6 +105,7 @@ Esta feature comprende la reserva y cancelación de clases por parte de los clie
 * El cliente puede consultar sus próximas reservas.
 * El cliente puede consultar su historial de reservas.
 * Las próximas reservas se muestran diferenciadas de las reservas anteriores.
+* Las reservas ya finalizadas se muestran con el estado "Finalizada".
 * La información corresponde exclusivamente a las reservas del cliente autenticado.
 
 ---

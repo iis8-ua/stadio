@@ -93,3 +93,19 @@ Se muestran patrones relacionados con la ocupación.
 Se muestran patrones relacionados con las clases demandadas.
 Se muestran patrones de afluencia.
 Los insights se basan en datos registrados.
+HU-07 — Consultar el análisis y coaching del entrenador
+
+Como entrenador,
+quiero un análisis de mis clases colectivas y sesiones personales y un coaching por cliente,
+para saber cómo van mis clientes y qué ajustar en su entrenamiento.
+
+Requisito: RF-92
+Prioridad: Should
+
+Criterios de aceptación:
+
+Se analiza la ocupación de las clases colectivas que imparte el entrenador.
+Se muestran sus entrenamientos personales y los clientes atendidos.
+Se calcula el ritmo/adherencia de cada cliente.
+Se generan recomendaciones por cliente (qué cambiar en su entrenamiento para mejorar).
+El resumen del entrenador refleja su actividad (clientes, clases, ocupación y rutinas).

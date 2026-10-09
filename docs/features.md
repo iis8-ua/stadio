@@ -52,6 +52,8 @@ Documento de organización de las funcionalidades del backend de STADIO a partir
 - RF-18 — Consultar rol, horario, estado y clases asignadas — **Should**
 - RF-19 — Asignar horario y disponibilidad — **Could**
 - RF-20 — Asignar clases a un entrenador — **Must**
+- RF-89 — Contratar el servicio de entrenador personal (cliente) y asignarlo (administrador) — **Must**
+- RF-91 — Agenda semanal del entrenador (turno + actividades) — **Should**
 
 ---
 
@@ -65,6 +67,7 @@ Documento de organización de las funcionalidades del backend de STADIO a partir
 - RF-23 — Calendario visible para cliente, entrenador y administrador — **Must**
 - RF-24 — Control de capacidad máxima de la clase — **Must**
 - RF-25 — Entrenador consulta clases, asistentes y capacidad — **Should**
+- RF-90 — Editar los materiales/equipamiento de una clase — **Should**
 
 ---
 
@@ -89,8 +92,8 @@ Documento de organización de las funcionalidades del backend de STADIO a partir
 **Requisitos:**
 - RF-32 — Biblioteca de ejercicios organizada por grupo muscular — **Must**
 - RF-33 — Buscar ejercicios por nombre — **Must**
-- RF-34 — Crear y editar rutinas — **Must**
-- RF-35 — Asignar y cambiar rutina de un cliente — **Must**
+- RF-34 — Crear y editar rutinas con series individuales (cada serie con su peso, repeticiones, descanso, RIR y RPE) — **Must**
+- RF-35 — Planificar las rutinas de un cliente en un calendario semanal (asignar rutina a días) — **Must**
 - RF-36 — Cliente consulta su rutina asignada — **Must**
 - RF-37 — Añadir ejercicios a la biblioteca — **Should**
 - RF-38 — Eliminar una rutina — **Should**
@@ -187,6 +190,7 @@ Documento de organización de las funcionalidades del backend de STADIO a partir
 - RF-73 — Detectar estancamientos, baja frecuencia y señales de sobreentrenamiento — **Should**
 - RF-74 — Recomendaciones de progresión y planificación — **Should**
 - RF-75 — Insights de negocio para el administrador — **Should**
+- RF-92 — Análisis y coaching para el entrenador (clases, sesiones personales y ritmo de sus clientes) — **Should**
 
 ---
 

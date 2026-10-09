@@ -67,7 +67,7 @@ Documento de requisitos funcionales y no funcionales derivado de `docs/especific
 | RF-27 | Un cliente puede cancelar su propia reserva. | Must |
 | RF-28 | No se puede reservar una clase completa (se muestra "Clase completa"; sin lista de espera). | Must |
 | RF-29 | No puede haber dos reservas activas del mismo cliente en la misma clase. | Must |
-| RF-30 | El cliente ve sus próximas reservas y su historial de reservas. | Must |
+| RF-30 | El cliente ve sus próximas reservas y su historial de reservas (las reservas pasadas se muestran como "Finalizada"). | Must |
 | RF-31 | El administrador puede consultar las reservas y la ocupación por clase. | Should |
 
 ## 6. Rutinas y ejercicios
@@ -76,8 +76,8 @@ Documento de requisitos funcionales y no funcionales derivado de `docs/especific
 |----|-----------|-----------|
 | RF-32 | La biblioteca de ejercicios está organizada por grupo muscular. | Must |
 | RF-33 | Se puede buscar un ejercicio por nombre. | Must |
-| RF-34 | El entrenador puede crear y editar una rutina (nombre, objetivo, días por semana, ejercicios con series, repeticiones, peso, descanso, RIR/RPE). | Must |
-| RF-35 | El entrenador puede asignar y cambiar la rutina de un cliente. | Must |
+| RF-34 | El entrenador puede crear y editar una rutina (nombre, objetivo, días por semana, ejercicios con **series individuales**: cada serie con su propio peso, repeticiones, descanso, RIR y RPE). | Must |
+| RF-35 | El entrenador puede planificar las rutinas de un cliente en un **calendario semanal**, asignando una rutina a días concretos. | Must |
 | RF-36 | El cliente puede ver su rutina asignada. | Must |
 | RF-37 | El entrenador puede añadir nuevos ejercicios a la biblioteca. | Should |
 | RF-38 | El entrenador puede eliminar una rutina. | Should |
@@ -181,6 +181,15 @@ Documento de requisitos funcionales y no funcionales derivado de `docs/especific
 | RF-86 | Existe un modo claro/oscuro conmutable desde la configuración. | Should |
 | RF-87 | Toda vista muestra estados de carga, vacío, error y éxito. | Should |
 | RF-88 | Las acciones de escritura confirman su resultado (toast o confirmación). | Should |
+
+## 17. Ampliaciones de la versión actual
+
+| ID | Requisito | Prioridad |
+|----|-----------|-----------|
+| RF-89 | El cliente puede contratar (solicitar) y darse de baja del servicio de entrenador personal; el administrador asigna, cambia o quita el entrenador concreto; el entrenador solo ve los clientes que tiene asignados. | Must |
+| RF-90 | El empleado/entrenador puede editar los materiales/equipamiento que se van a usar en una clase (eligiéndolos de los equipos del gimnasio). | Should |
+| RF-91 | El entrenador dispone de una agenda semanal con el turno de trabajo asignado por el administrador y sus actividades planificadas (clases y otras tareas). | Should |
+| RF-92 | El entrenador dispone de un análisis inteligente de sus clases colectivas y sesiones personales y de un coaching por cliente (ritmo/adherencia y recomendaciones de mejora). | Should |
 
 ---
 

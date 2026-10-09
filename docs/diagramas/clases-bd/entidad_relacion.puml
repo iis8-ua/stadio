@@ -25,7 +25,6 @@ entity "clientes" as clientes {
   fecha_nacimiento : date
   objetivo : varchar
   peso : decimal
-  rutina_id : bigint FK
 }
 
 entity "entrenadores" as entrenadores {
@@ -60,9 +59,16 @@ entity "rutina_ejercicio" as re {
   ---
   rutina_id : bigint FK
   ejercicio_id : bigint FK
-  series : int
-  repeticiones : varchar
+  notas : text
+}
+
+entity "rutina_series" as rserie {
+  * id : bigint PK
+  ---
+  rutina_ejercicio_id : bigint FK
+  numero_serie : int
   peso : decimal
+  repeticiones : int
   descanso : int
   rir : int
   rpe : int
@@ -121,6 +127,43 @@ entity "reservas" as reservas {
   clase_id : bigint FK
   fecha_reserva : datetime
   estado : enum <EstadoReserva>
+}
+
+' ---------- Asignaciones y agenda ----------
+entity "asignaciones_rutina" as asig_rutina {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  rutina_id : bigint FK
+  fecha : date
+}
+
+entity "asignaciones_entrenador" as asig_entrenador {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  entrenador_id : bigint FK
+  estado : enum <EstadoAsignacionEntrenador>
+  fecha_solicitud : date
+  fecha_asignacion : date
+}
+
+entity "materiales_clase" as mat_clase {
+  * id : bigint PK
+  ---
+  clase_id : bigint FK
+  equipo_id : bigint FK
+}
+
+entity "actividades_entrenador" as act_entrenador {
+  * id : bigint PK
+  ---
+  entrenador_id : bigint FK
+  sala_id : bigint FK
+  fecha : date
+  hora_inicio : varchar
+  hora_fin : varchar
+  titulo : varchar
 }
 
 ' ---------- Accesos y cuotas ----------
@@ -189,10 +232,15 @@ entity "notificaciones" as notif {
 users ||--|| clientes : tiene (1:1)
 users ||--|| entrenadores : tiene (1:1)
 
-clientes }o--|| rutinas : "rutina asignada"
 entrenadores }o--|| rutinas : "crea"
 rutinas ||--o{ re : contiene
 ejercicios ||--o{ re : contiene
+re ||--o{ rserie : "define series"
+
+asig_rutina }o--|| clientes : "para"
+asig_rutina }o--|| rutinas : "de"
+asig_entrenador }o--|| clientes : "para"
+asig_entrenador }o--|| entrenadores : "de"
 
 entrenamientos }o--|| clientes : "de"
 entrenamientos }o--|| rutinas : "sigue"
@@ -201,6 +249,10 @@ series }o--|| ejercicios : "sobre"
 
 clases }o--|| entrenadores : "imparte"
 clases }o--|| salas : "en"
+mat_clase }o--|| clases : "material de"
+mat_clase }o--|| equipos : "equipo"
+act_entrenador }o--|| entrenadores : "de"
+act_entrenador }o--|| salas : "en"
 reservas }o--|| clientes : "del"
 reservas }o--|| clases : "para"
 

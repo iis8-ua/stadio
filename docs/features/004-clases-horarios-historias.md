@@ -129,6 +129,46 @@ Esta feature comprende la creación y gestión de las clases del gimnasio, su di
 
 ---
 
+## HU-07 — Editar los materiales de una clase
+
+**Prioridad:** Should
+**Requisito relacionado:** RF-90
+
+### Historia de usuario
+
+> Como empleado (entrenador),
+> quiero editar los materiales que se van a usar en una clase,
+> para dejar preparado el equipamiento necesario.
+
+### Criterios de aceptación
+
+* El empleado puede consultar los materiales de una clase.
+* Puede añadir materiales eligiéndolos del equipamiento del gimnasio.
+* Puede quitar materiales.
+* Los cambios se guardan y se muestran al volver a consultar la clase.
+
+---
+
+## HU-08 — Consultar y planificar mi agenda semanal
+
+**Prioridad:** Should
+**Requisito relacionado:** RF-91
+
+### Historia de usuario
+
+> Como entrenador,
+> quiero consultar mi agenda semanal con mi turno y mis actividades planificadas,
+> para organizar mi jornada.
+
+### Criterios de aceptación
+
+* El entrenador ve su agenda por semanas (días).
+* Se muestra el turno de trabajo (entrada/salida) asignado por el administrador.
+* Se muestran sus clases del día y sus actividades planificadas.
+* Puede añadir, editar y eliminar actividades propias de la agenda.
+
+---
+
 ## Relación entre historias y requisitos
 
 | Historia                                                  | Requisitos | Prioridad |
@@ -139,3 +179,5 @@ Esta feature comprende la creación y gestión de las clases del gimnasio, su di
 | HU-04 — Consultar el calendario de clases                 | RF-23      | Must      |
 | HU-05 — Establecer la capacidad máxima de una clase       | RF-24      | Must      |
 | HU-06 — Consultar las clases y asistentes como entrenador | RF-25      | Should    |
+| HU-07 — Editar los materiales de una clase                | RF-90      | Should    |
+| HU-08 — Consultar y planificar mi agenda semanal          | RF-91      | Should    |

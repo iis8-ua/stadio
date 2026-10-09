@@ -12,6 +12,7 @@ rectangle "STADIO" {
   usecase "Dar de alta clientes" as UC_AltaCl
   usecase "Editar / desactivar clientes" as UC_EditCl
   usecase "Asignar pulsera NFC a cliente" as UC_NFC
+  usecase "Asignar entrenador personal a cliente" as UC_AsigEnt
   usecase "Gestionar empleados" as UC_Empleados
   usecase "Crear / editar / eliminar clases" as UC_Clases
   usecase "Asignar entrenador y sala a una clase" as UC_AsignarCl
@@ -32,6 +33,7 @@ Admin --> UC_Dash
 Admin --> UC_AltaCl
 Admin --> UC_EditCl
 Admin --> UC_NFC
+Admin --> UC_AsigEnt
 Admin --> UC_Empleados
 Admin --> UC_Clases
 Admin --> UC_AsignarCl

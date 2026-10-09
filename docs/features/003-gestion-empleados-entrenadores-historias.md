@@ -133,6 +133,27 @@ Esta feature comprende la gestión de los empleados del gimnasio, especialmente 
 
 ---
 
+## HU-07 — Asignar un entrenador personal a un cliente
+
+**Prioridad:** Must
+**Requisito relacionado:** RF-89
+
+### Historia de usuario
+
+> Como administrador,
+> quiero asignar, cambiar o quitar el entrenador personal de un cliente que ha contratado el servicio,
+> para que el entrenador correspondiente haga su seguimiento.
+
+### Criterios de aceptación
+
+* El cliente puede solicitar (contratar) el servicio de entrenador personal desde su perfil y darse de baja cuando quiera.
+* El administrador ve en la ficha del cliente si ha solicitado entrenador personal.
+* El administrador puede asignar un entrenador (empleado con rol de entrenador personal), cambiarlo o quitarlo.
+* El cliente ve los datos del entrenador asignado.
+* El entrenador solo ve los clientes que tiene asignados.
+
+---
+
 ## Relación entre historias y requisitos
 
 | Historia                                                       | Requisitos | Prioridad |
@@ -143,3 +164,4 @@ Esta feature comprende la gestión de los empleados del gimnasio, especialmente 
 | HU-04 — Consultar el listado de empleados                      | RF-18      | Should    |
 | HU-05 — Gestionar el horario y disponibilidad de un entrenador | RF-19      | Could     |
 | HU-06 — Asignar clases a un entrenador                         | RF-20      | Must      |
+| HU-07 — Asignar un entrenador personal a un cliente            | RF-89      | Must      |

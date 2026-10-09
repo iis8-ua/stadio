@@ -18,6 +18,7 @@ enum EstadoUsuario {
 enum EstadoReserva {
   CONFIRMADA
   CANCELADA
+  FINALIZADA
 }
 enum TipoAcceso {
   ENTRADA
@@ -44,6 +45,11 @@ enum EstadoEquipo {
 enum TipoIncidencia {
   MANTENIMIENTO
   INCIDENCIA
+}
+enum EstadoAsignacionEntrenador {
+  SOLICITADA
+  ASIGNADA
+  FINALIZADA
 }
 
 ' ---------- Usuarios ----------
@@ -102,9 +108,14 @@ class Ejercicio {
 
 class RutinaEjercicio {
   - id : Long
-  - series : int
-  - repeticiones : String
+  - notas : String
+}
+
+class RutinaSerie {
+  - id : Long
+  - numeroSerie : int
   - peso : Double
+  - repeticiones : int
   - descanso : int
   - rir : int
   - rpe : int
@@ -207,14 +218,44 @@ class Notificacion {
   - fecha : LocalDateTime
 }
 
+' ---------- Asignaciones y agenda ----------
+class AsignacionRutina {
+  - id : Long
+  - fecha : Date
+}
+
+class AsignacionEntrenador {
+  - id : Long
+  - estado : EstadoAsignacionEntrenador
+  - fechaSolicitud : Date
+  - fechaAsignacion : Date
+}
+
+class MaterialClase {
+  - id : Long
+}
+
+class ActividadEntrenador {
+  - id : Long
+  - fecha : Date
+  - horaInicio : String
+  - horaFin : String
+  - titulo : String
+}
+
 ' ---------- Relaciones ----------
 Cliente "1" --> "1" Usuario : usuario
 Entrenador "1" --> "1" Usuario : usuario
 
 Rutina "1" <-- "0..*" Entrenador : creadaPor
-Rutina "1" <-- "0..*" Cliente : asignadaA
 Rutina "1" -- "1..*" RutinaEjercicio : contiene
 Ejercicio "1" -- "1..*" RutinaEjercicio : asocia
+RutinaEjercicio "1" -- "1..*" RutinaSerie : series
+
+AsignacionRutina "0..*" --> "1" Cliente : cliente
+AsignacionRutina "0..*" --> "1" Rutina : rutina
+AsignacionEntrenador "0..*" --> "1" Cliente : cliente
+AsignacionEntrenador "0..*" --> "1" Entrenador : entrenador
 
 Entrenamiento "0..*" --> "1" Cliente : cliente
 Entrenamiento "0..*" --> "1" Rutina : rutina
@@ -223,8 +264,13 @@ Serie "0..*" --> "1" Ejercicio : ejercicio
 
 Clase "0..*" --> "1" Sala : sala
 Clase "0..*" --> "1" Entrenador : entrenador
+Clase "1" -- "0..*" MaterialClase : materiales
+Equipo "1" -- "0..*" MaterialClase : usadoEn
 Reserva "0..*" --> "1" Cliente : cliente
 Reserva "0..*" --> "1" Clase : clase
+
+ActividadEntrenador "0..*" --> "1" Entrenador : entrenador
+ActividadEntrenador "0..*" --> "0..1" Sala : sala
 
 Acceso "0..*" --> "1" Usuario : usuario
 
