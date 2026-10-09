@@ -29,7 +29,7 @@ La autenticación y la gestión de sesiones son comunes; cada rol determina las 
 ### Comunes
 
 - Inicio de sesión, cierre de sesión y recuperación de contraseña (el alta de usuarios la realiza el administrador; no hay autorregistro).
-- Gestión del perfil (avatar, nombre, email, preferencias).
+- Gestión del perfil (foto de perfil —subir o quitar—, nombre, email, preferencias).
 - Aplicación real de modo claro/oscuro, conmutable desde configuración.
 - Diseño responsive (390 px a 1440 px) con sidebar en escritorio y menú lateral en móvil.
 - Estados visuales completos: carga, vacío, error, éxito, deshabilitado, modal y confirmación.
@@ -91,8 +91,8 @@ La comunicación entre frontend y backend se realiza mediante una API REST en JS
 
 ## 6. Integraciones externas
 
-- **Control de accesos (tornos + pulsera NFC)**: el gimnasio dispone de tornos de entrada a los que los clientes acceden con una pulsera NFC. El backend integra el lector/torno para registrar automáticamente entradas y salidas, identificando al usuario mediante el identificador de su pulsera. Sobre estos datos se calculan el historial de accesos y el aforo en tiempo real. La integración se especifica mediante la interfaz del dispositivo (identificador de pulsera por lectura y eventos de paso recibidos desde el sistema de tornos).
-- **Pasarela de pago (Stripe)**: las cuotas mensuales se cobran a través de una pasarela de pago del tipo Stripe. El backend orquesta el cobro de la cuota del mes, valida la confirmación de la pasarela y actualiza el estado de la cuota y el historial de pagos.
+- **Control de accesos**: el gimnasio dispone de tornos de entrada a los que los clientes acceden con una pulsera NFC. El backend integra el lector/torno para registrar automáticamente entradas y salidas, identificando al usuario mediante el identificador de su pulsera. Sobre estos datos se calculan el historial de accesos y el aforo en tiempo real. La integración se especifica mediante la interfaz del dispositivo (identificador de pulsera por lectura y eventos de paso recibidos desde el sistema de tornos).
+- **Pasarela de pago**: las cuotas mensuales se cobran a través de una pasarela de pago del tipo Stripe. El backend orquesta el cobro de la cuota del mes, valida la confirmación de la pasarela y actualiza el estado de la cuota y el historial de pagos.
 
 Ambas integraciones se implementan de forma real contra el entorno correspondiente (hardware de acceso y entorno de pruebas de la pasarela).
 
@@ -100,28 +100,56 @@ Ambas integraciones se implementan de forma real contra el entorno correspondien
 
 La aplicación incorpora dos subsistemas diferenciados, ambos basados en reglas y heurísticas sobre los datos registrados:
 
-**Análisis inteligente.** Analiza el historial del cliente y los datos del gimnasio para generar recomendaciones e insights:
+**Análisis inteligente** Analiza el historial del cliente y los datos del gimnasio para generar recomendaciones e insights:
 
 - Para el cliente: detección de estancamientos de cargas, grupos musculares con menor frecuencia, equilibrio del entrenamiento según el objetivo, señales de sobreentrenamiento o falta de recuperación, y recomendaciones de progresión de peso y planificación semanal.
 - Para el administrador: patrones de ocupación y horas punta, clases más demandadas, días de mayor afluencia y recomendaciones de gestión.
 - Para el entrenador: análisis de sus clases colectivas y sesiones personales, y coaching por cliente (ritmo/adherencia y qué ajustar en su entrenamiento).
 
-**Chatbot (asistente virtual).** Módulo destinado al cliente para resolver dudas sobre el gimnasio (horarios, clases, reservas, cuota, acceso e instalaciones) mediante reglas sobre la información del centro. Es un subsistema distinto del análisis inteligente.
+**Chatbot** Módulo destinado al cliente para resolver dudas sobre el gimnasio (horarios, clases, reservas, cuota, acceso e instalaciones) mediante reglas sobre la información del centro. Es un subsistema distinto del análisis inteligente.
 
 ## 8. Modelo de datos
 
 Entidades de dominio principales, con sus campos más relevantes:
 
 ```
-Usuario: id, nombre, email, hash_contraseña, telefono, rol (cliente/entrenador/administrador),
-    estado (activo/desactivado), fecha_alta, identificador_pulsera (NFC)
-    Entrenador: especialidad, horario_semanal, disponibilidad   (subconjunto de Usuario con rol entrenador)
-        actividades -> ActividadEntrenador (1:N)
+Usuario: id, nombre, email, hash_contraseña, telefono, avatar, sexo, fecha_nacimiento, direccion,
+    ciudad, codigo_postal, rol (cliente/entrenador/administrador), estado (activo/desactivado),
+    fecha_alta, identificador_pulsera (NFC)
 
-Cliente: id, fecha_nacimiento, objetivo, peso (actualizado por el seguimiento)
+Empleado: id, roles (entrenador/monitor/instructor/personal/recepción/limpieza), horario_semanal,
+    disponibilidad, salario_tipo (mensual/por horas), salario   (subconjunto de Usuario con rol de empleado)
     usuario -> Usuario (1:1)
+    vacaciones -> PeriodoVacaciones (1:N)
+
+Entrenador: id, especialidad   (subconjunto de Empleado)
+    empleado -> Empleado (1:1)
+    actividades -> ActividadEntrenador (1:N)
+
+PeriodoVacaciones: id, fecha_inicio, fecha_fin
+    empleado -> Empleado (N:1)
+
+Cliente: id, objetivo, peso, peso_objetivo, frecuencia, progreso (actualizado por el seguimiento)
+    usuario -> Usuario (1:1)
+    cuenta_bancaria -> CuentaBancaria (1:0..1)
     asignaciones_rutina -> AsignacionRutina (1:N)   (planificación de rutinas por fechas)
     entrenador_personal -> AsignacionEntrenador (1:N)   (servicio contratado y asignado)
+
+CuentaBancaria: id, titular, iban, cobro_automatico
+    cliente -> Cliente (1:1)
+
+Configuracion: id, nombre, direccion, ciudad, telefono, capacidad, importe_cuota, dia_cobro,
+    notificaciones (recordatorio de cuota, recordatorio de clases, resumen semanal, canal email, canal push)
+    horario -> HorarioGimnasio (1:N)   (un registro por día de la semana)
+    festivos -> Festivo (1:N)
+
+HorarioGimnasio: id, dia_semana, hora_apertura, hora_cierre, cerrado
+Festivo: id, fecha, hora_apertura, hora_cierre, cerrado
+
+Permiso: id, codigo, nombre, descripcion, grupo
+    roles -> RolPermiso (1:N)
+RolPermiso: id, rol (cliente/entrenador/administrador)
+    permiso -> Permiso (N:1)
 
 AsignacionRutina: id, fecha
     cliente -> Cliente (N:1)
@@ -131,16 +159,25 @@ AsignacionEntrenador: id, estado (solicitada/asignada/finalizada), fecha_solicit
     cliente -> Cliente (N:1)
     entrenador -> Entrenador (N:1)
 
+TipoClase: id, nombre, descripcion
+    clases -> Clase (1:N)
+    entrenadores -> EntrenadorTipoClase (1:N)   (tipos que puede impartir cada entrenador)
+
 Clase: id, nombre, descripcion, fecha_hora, duracion, capacidad
+    tipo_clase -> TipoClase (N:1)
     sala -> Sala (N:1)
-    entrenador -> Usuario (N:1)
+    entrenador -> Entrenador (N:1)
     materiales -> Equipo (N:M)
+
+EntrenadorTipoClase: id
+    entrenador -> Entrenador (N:1)
+    tipo_clase -> TipoClase (N:1)
 
 ActividadEntrenador: id, fecha, hora_inicio, hora_fin, titulo
     entrenador -> Entrenador (N:1)
     sala -> Sala (N:0..1)
 
-Reserva: id, fecha, estado (confirmada/cancelada/finalizada)
+Reserva: id, fecha, estado (confirmada/pendiente/cancelada/finalizada)
     cliente -> Cliente (N:1)
     clase -> Clase (N:1)
     (no puede haber dos reservas activas del mismo cliente para la misma clase)
@@ -152,7 +189,7 @@ Rutina: id, nombre, objetivo (hipertrofia/fuerza/pérdida de grasa/resistencia..
     ejercicios: rutina_ejercicio (id, notas) -> Ejercicio
         series: rutina_serie (numero_serie, peso, repeticiones, descanso, rir, rpe)   (cada serie con sus propios valores)
 
-Entrenamiento: id, fecha, duracion, estado, volumen_total
+Entrenamiento: id, fecha, duracion, estado (en curso/finalizado), volumen_total
     cliente -> Cliente (N:1)
     rutina -> Rutina (N:1)
 
@@ -160,27 +197,30 @@ Serie: id, numero_serie, peso, repeticiones, rir, rpe, descanso, notas
     entrenamiento -> Entrenamiento (N:1)
     ejercicio -> Ejercicio (N:1)
 
-Acceso: id, timestamp, tipo (entrada/salida), metodo (torno/pulsera/manual)
+Acceso: id, timestamp, tipo (entrada/salida), metodo (pulsera NFC leída en el torno; ampliable a otros métodos)
     usuario -> Usuario (N:1)
-    (todos los accesos se registran; el aforo se calcula como diferencia entre entradas y salidas)
+    (el acceso es solo con pulsera NFC; no hay registro manual) (todos los accesos se registran; el aforo se calcula como diferencia entre entradas y salidas)
 
 Cuota: id, periodo (mes/año), importe, estado (pagada/pendiente), fecha_pago, metodo, ref_transaccion
     cliente -> Cliente (N:1)
     (una única cuota mensual por cliente; no puede haber duplicados de cliente+periodo)
 
-Sala: id, nombre, capacidad
+Sala: id, nombre, capacidad, estado (disponible/no disponible)
 
-Equipo: id, nombre, estado (disponible/mantenimiento/fuera de servicio), fecha_ultimo_mantenimiento
+Equipo: id, nombre, tipo, estado (disponible/mantenimiento/fuera de servicio), fecha_ultimo_mantenimiento
     sala -> Sala (N:1)
 
-Incidencia: id, descripcion, tipo (mantenimiento/incidencia), estado, fecha
-    equipo -> Equipo (N:1)
+Incidencia: id, titulo, descripcion, ubicacion, tipo (mantenimiento/incidencia), estado, fecha
+    equipo -> Equipo (N:0..1)
     reportada_por -> Usuario (N:1)
+
+Notificacion: id, titulo, texto, detalle, tipo (info/aviso/éxito/error), leido, fecha
+    usuario -> Usuario (N:1)
 
 Mensaje_chatbot: id, texto_usuario, texto_respuesta, fecha
     cliente -> Cliente (N:1)
 ```
 
-Relaciones principales entre las entidades de dominio (sin contar Usuario): un **cliente** tiene una **planificación de rutinas por fechas** (`AsignacionRutina`) y puede tener un **entrenador personal** asignado (`AsignacionEntrenador`); cada **rutina** agrupa **ejercicios**, y cada ejercicio agrupa **series individuales** (`RutinaSerie`) con sus propios valores; los **entrenamientos** registran **series** de ejercicios y pertenecen al cliente; un **cliente** hace **reservas** de **clases** (con sus **materiales**), que se imparten en **salas**; los **accesos** se asocian al usuario y alimentan el aforo; cada **cliente** mantiene una **cuota** mensual; el **entrenador** tiene una **agenda** propia (`ActividadEntrenador`); las **incidencias** afectan a los **equipos** ubicados en **salas**.
+Relaciones principales entre las entidades de dominio (sin contar Usuario): un **cliente** tiene una **planificación de rutinas por fechas** (`AsignacionRutina`) y puede tener un **entrenador personal** asignado (`AsignacionEntrenador`); cada **rutina** agrupa **ejercicios**, y cada ejercicio agrupa **series individuales** (`RutinaSerie`) con sus propios valores; los **entrenamientos** registran **series** de ejercicios y pertenecen al cliente; un **cliente** hace **reservas** de **clases** (con sus **materiales**), que se imparten en **salas**; los **accesos** se asocian al usuario y alimentan el aforo; cada **cliente** mantiene una **cuota** mensual; el **entrenador** tiene una **agenda** propia (`ActividadEntrenador`); las **incidencias** afectan a los **equipos** ubicados en **salas**. Además, un **empleado** (con sus **periodos de vacaciones**) puede ser **entrenador**; cada **cliente** puede tener una **cuenta bancaria** para el cobro; la **configuración** del gimnasio agrupa **horarios** y **festivos**; los **roles** se asocian a **permisos**; y cada **clase** pertenece a un **tipo de clase**.
 
 

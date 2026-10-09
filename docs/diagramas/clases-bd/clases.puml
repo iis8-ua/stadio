@@ -11,24 +11,45 @@ enum Rol {
   ENTRENADOR
   ADMINISTRADOR
 }
+enum RolEmpleado {
+  ENTRENADOR
+  MONITOR
+  INSTRUCTOR
+  PERSONAL
+  RECEPCION
+  LIMPIEZA
+}
+enum TipoSalario {
+  MENSUAL
+  POR_HORAS
+}
 enum EstadoUsuario {
   ACTIVO
   DESACTIVADO
 }
 enum EstadoReserva {
   CONFIRMADA
+  PENDIENTE
   CANCELADA
   FINALIZADA
+}
+enum EstadoEntrenamiento {
+  EN_CURSO
+  FINALIZADO
 }
 enum TipoAcceso {
   ENTRADA
   SALIDA
 }
 enum MetodoAcceso {
-  TORNO
   PULSERA_NFC
-  MANUAL
 }
+note right of MetodoAcceso
+  El acceso es solo con la pulsera NFC
+  leída en el torno (pulsera = torno).
+  No hay acceso manual. El campo se
+  mantiene por si se añade otro método.
+end note
 enum EstadoCuota {
   PAGADA
   PENDIENTE
@@ -42,6 +63,10 @@ enum EstadoEquipo {
   MANTENIMIENTO
   FUERA_DE_SERVICIO
 }
+enum EstadoSala {
+  DISPONIBLE
+  NO_DISPONIBLE
+}
 enum TipoIncidencia {
   MANTENIMIENTO
   INCIDENCIA
@@ -51,6 +76,12 @@ enum EstadoAsignacionEntrenador {
   ASIGNADA
   FINALIZADA
 }
+enum TipoNotificacion {
+  INFO
+  AVISO
+  EXITO
+  ERROR
+}
 
 ' ---------- Usuarios ----------
 class Usuario {
@@ -59,6 +90,12 @@ class Usuario {
   - email : String
   - hashContrasena : String
   - telefono : String
+  - avatar : String
+  - sexo : String
+  - fechaNacimiento : Date
+  - direccion : String
+  - ciudad : String
+  - codigoPostal : String
   - rol : Rol
   - estado : EstadoUsuario
   - fechaAlta : Date
@@ -67,22 +104,44 @@ class Usuario {
 
 class Cliente {
   - id : Long
-  - fechaNacimiento : Date
   - objetivo : String
   - peso : Double
+  - pesoObjetivo : Double
+  - frecuencia : String
+  - progreso : int
   + verProgreso()
   + reservarClase()
   + registrarSerie()
 }
 
+class Empleado {
+  - id : Long
+  - roles : RolEmpleado[]
+  - horarioSemanal : String
+  - disponibilidad : String
+  - salarioTipo : TipoSalario
+  - salario : Double
+}
+
 class Entrenador {
   - id : Long
   - especialidad : String
-  - horarioSemanal : String
-  - disponibilidad : String
   + crearRutina()
   + asignarRutina(cliente, rutina)
   + gestionarClase()
+}
+
+class PeriodoVacaciones {
+  - id : Long
+  - fechaInicio : Date
+  - fechaFin : Date
+}
+
+class CuentaBancaria {
+  - id : Long
+  - titular : String
+  - iban : String
+  - cobroAutomatico : boolean
 }
 
 note top of Usuario
@@ -90,6 +149,53 @@ note top of Usuario
   gestiona todos los módulos y da de alta a
   clientes y empleados (RF-04).
 end note
+
+' ---------- Configuración del gimnasio ----------
+class Configuracion {
+  - id : Long
+  - nombre : String
+  - direccion : String
+  - ciudad : String
+  - telefono : String
+  - capacidad : int
+  - importeCuota : Double
+  - diaCobro : int
+  - notifRecordatorioCuota : boolean
+  - notifRecordatorioClases : boolean
+  - notifResumenSemanal : boolean
+  - notifCanalEmail : boolean
+  - notifCanalPush : boolean
+}
+
+class HorarioGimnasio {
+  - id : Long
+  - diaSemana : int
+  - horaApertura : String
+  - horaCierre : String
+  - cerrado : boolean
+}
+
+class Festivo {
+  - id : Long
+  - fecha : Date
+  - horaApertura : String
+  - horaCierre : String
+  - cerrado : boolean
+}
+
+' ---------- Roles y permisos ----------
+class Permiso {
+  - id : Long
+  - codigo : String
+  - nombre : String
+  - descripcion : String
+  - grupo : String
+}
+
+class RolPermiso {
+  - id : Long
+  - rol : Rol
+}
 
 ' ---------- Rutinas y ejercicios ----------
 class Rutina {
@@ -126,7 +232,7 @@ class Entrenamiento {
   - id : Long
   - fecha : LocalDateTime
   - duracion : int
-  - estado : String
+  - estado : EstadoEntrenamiento
   - volumenTotal : Double
   + finalizar()
   + calcularVolumen()
@@ -144,6 +250,12 @@ class Serie {
 }
 
 ' ---------- Clases y reservas ----------
+class TipoClase {
+  - id : Long
+  - nombre : String
+  - descripcion : String
+}
+
 class Clase {
   - id : Long
   - nombre : String
@@ -153,10 +265,15 @@ class Clase {
   - capacidad : int
 }
 
+class EntrenadorTipoClase {
+  - id : Long
+}
+
 class Sala {
   - id : Long
   - nombre : String
   - capacidad : int
+  - estado : EstadoSala
 }
 
 class Reserva {
@@ -191,13 +308,16 @@ class Cuota {
 class Equipo {
   - id : Long
   - nombre : String
+  - tipo : String
   - estado : EstadoEquipo
   - fechaUltimoMantenimiento : Date
 }
 
 class Incidencia {
   - id : Long
+  - titulo : String
   - descripcion : String
+  - ubicacion : String
   - tipo : TipoIncidencia
   - estado : String
   - fecha : LocalDateTime
@@ -213,7 +333,10 @@ class MensajeChatbot {
 
 class Notificacion {
   - id : Long
+  - titulo : String
   - texto : String
+  - detalle : String
+  - tipo : TipoNotificacion
   - leido : boolean
   - fecha : LocalDateTime
 }
@@ -245,7 +368,14 @@ class ActividadEntrenador {
 
 ' ---------- Relaciones ----------
 Cliente "1" --> "1" Usuario : usuario
-Entrenador "1" --> "1" Usuario : usuario
+Empleado "1" --> "1" Usuario : usuario
+Entrenador "1" --> "1" Empleado : empleado
+PeriodoVacaciones "0..*" --> "1" Empleado : empleado
+CuentaBancaria "1" --> "1" Cliente : titular
+
+Configuracion "1" -- "1..7" HorarioGimnasio : horario
+Configuracion "1" -- "0..*" Festivo : festivos
+RolPermiso "0..*" --> "1" Permiso : permiso
 
 Rutina "1" <-- "0..*" Entrenador : creadaPor
 Rutina "1" -- "1..*" RutinaEjercicio : contiene
@@ -262,8 +392,11 @@ Entrenamiento "0..*" --> "1" Rutina : rutina
 Serie "0..*" --> "1" Entrenamiento : entrenamiento
 Serie "0..*" --> "1" Ejercicio : ejercicio
 
+TipoClase "1" -- "0..*" Clase : tipo
 Clase "0..*" --> "1" Sala : sala
 Clase "0..*" --> "1" Entrenador : entrenador
+EntrenadorTipoClase "0..*" --> "1" Entrenador : entrenador
+EntrenadorTipoClase "0..*" --> "1" TipoClase : tipoClase
 Clase "1" -- "0..*" MaterialClase : materiales
 Equipo "1" -- "0..*" MaterialClase : usadoEn
 Reserva "0..*" --> "1" Cliente : cliente
@@ -277,7 +410,7 @@ Acceso "0..*" --> "1" Usuario : usuario
 Cuota "0..*" --> "1" Cliente : cliente
 
 Equipo "0..*" --> "1" Sala : sala
-Incidencia "0..*" --> "1" Equipo : equipo
+Incidencia "0..*" --> "0..1" Equipo : equipo
 Incidencia "0..*" --> "1" Usuario : reportadaPor
 
 MensajeChatbot "0..*" --> "1" Cliente : cliente

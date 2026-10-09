@@ -19,7 +19,6 @@ rectangle "STADIO" {
   usecase "Consultar reservas y ocupación" as UC_Reservas
   usecase "Gestionar cuotas" as UC_Cuotas
   usecase "Registrar pago manual" as UC_PagoMan
-  usecase "Registrar acceso manual" as UC_AccMan
   usecase "Gestionar salas y equipos" as UC_Instal
   usecase "Registrar incidencia / mantenimiento" as UC_Inc
   usecase "Consultar analítica" as UC_Analitica
@@ -40,7 +39,6 @@ Admin --> UC_AsignarCl
 Admin --> UC_Reservas
 Admin --> UC_Cuotas
 Admin --> UC_PagoMan
-Admin --> UC_AccMan
 Admin --> UC_Instal
 Admin --> UC_Inc
 Admin --> UC_Analitica

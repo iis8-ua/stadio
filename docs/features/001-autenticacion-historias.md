@@ -155,7 +155,9 @@ Los roles contemplados son:
 * El sistema solicita la información necesaria para realizar el cambio de contraseña.
 * El usuario puede editar su nombre.
 * El usuario puede editar su teléfono.
-* El usuario puede editar su avatar.
+* El usuario puede subir o cambiar su foto de perfil.
+* El usuario puede quitar su foto de perfil (volviendo a mostrar sus iniciales).
+* El usuario puede editar su dirección, localidad y código postal.
 * El usuario puede editar sus datos bancarios.
 * Los cambios realizados correctamente quedan asociados a su perfil.
 * Los datos modificados se muestran actualizados posteriormente.

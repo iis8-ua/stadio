@@ -136,7 +136,8 @@ Documento de organización de las funcionalidades del backend de STADIO a partir
 - RF-51 — Consultar historial de accesos — **Must**
 - RF-52 — Calcular y mostrar aforo en tiempo real — **Must**
 - RF-53 — Mostrar accesos sin salida registrada — **Should**
-- RF-54 — Registrar accesos manualmente — **Could**
+
+> Nota: el acceso es **solo con pulsera NFC** (leída en el torno); no hay registro manual. Se quitó RF-54.
 
 ---
 

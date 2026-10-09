@@ -1,79 +1,104 @@
-Feature 011 — Instalaciones y mantenimiento
-Descripción
+# Feature 011 — Instalaciones y mantenimiento
+
+## Descripción
 
 Esta funcionalidad permite gestionar las salas, los equipos y las incidencias o mantenimientos asociados.
 
-HU-01 — Gestionar las salas
+---
 
-Como administrador,
-quiero gestionar las salas del gimnasio,
-para mantener actualizada la distribución de las instalaciones.
+## HU-01 — Gestionar las salas
 
-Requisito: RF-64
-Prioridad: Should
+**Prioridad:** Should
+**Requisito relacionado:** RF-64
 
-Criterios de aceptación:
+### Historia de usuario
 
-El administrador puede consultar las salas.
-Puede crear una sala.
-Puede modificar sus datos.
-La información de las salas queda disponible para otras funcionalidades que las utilizan.
-HU-02 — Gestionar los equipos de una sala
+> Como administrador,
+> quiero gestionar las salas del gimnasio,
+> para mantener actualizada la distribución de las instalaciones.
 
-Como administrador,
-quiero gestionar los equipos de cada sala,
-para conocer qué equipamiento existe en cada espacio.
+### Criterios de aceptación
 
-Requisito: RF-65
-Prioridad: Should
+* El administrador puede consultar las salas.
+* Puede crear una sala.
+* Puede modificar sus datos.
+* La información de las salas queda disponible para otras funcionalidades que las utilizan.
 
-Criterios de aceptación:
+---
 
-El administrador puede consultar los equipos de una sala.
-Puede registrar nuevos equipos.
-Puede modificar la información de un equipo.
-Cada equipo queda asociado a una sala.
-HU-03 — Gestionar el estado de un equipo
+## HU-02 — Gestionar los equipos de una sala
 
-Como administrador,
-quiero indicar el estado de cada equipo,
-para conocer si puede utilizarse o necesita atención.
+**Prioridad:** Should
+**Requisito relacionado:** RF-65
 
-Requisito: RF-66
-Prioridad: Should
+### Historia de usuario
 
-Criterios de aceptación:
+> Como administrador,
+> quiero gestionar los equipos de cada sala,
+> para conocer qué equipamiento existe en cada espacio.
 
-Un equipo puede estar disponible.
-Un equipo puede estar en mantenimiento.
-Un equipo puede estar fuera de servicio.
-El estado actual se muestra al consultar el equipo.
-HU-04 — Registrar una incidencia de un equipo
+### Criterios de aceptación
 
-Como administrador,
-quiero registrar una incidencia relacionada con un equipo,
-para mantener un registro de los problemas detectados.
+* El administrador puede consultar los equipos de una sala.
+* Puede registrar nuevos equipos.
+* Puede modificar la información de un equipo.
+* Cada equipo queda asociado a una sala.
 
-Requisito: RF-67
-Prioridad: Should
+---
 
-Criterios de aceptación:
+## HU-03 — Gestionar el estado de un equipo
 
-El administrador puede seleccionar el equipo afectado.
-Puede describir la incidencia.
-Puede registrar el tipo correspondiente.
-La incidencia queda asociada al equipo.
-HU-05 — Registrar un mantenimiento
+**Prioridad:** Should
+**Requisito relacionado:** RF-66
 
-Como administrador,
-quiero registrar los mantenimientos realizados sobre los equipos,
-para mantener un historial de mantenimiento.
+### Historia de usuario
 
-Requisito: RF-67
-Prioridad: Should
+> Como administrador,
+> quiero indicar el estado de cada equipo,
+> para conocer si puede utilizarse o necesita atención.
 
-Criterios de aceptación:
+### Criterios de aceptación
 
-El mantenimiento queda asociado al equipo.
-Se registra la información correspondiente.
-El historial permite identificar que se ha realizado un mantenimiento.
+* Un equipo puede estar disponible.
+* Un equipo puede estar en mantenimiento.
+* Un equipo puede estar fuera de servicio.
+* El estado actual se muestra al consultar el equipo.
+
+---
+
+## HU-04 — Registrar una incidencia de un equipo
+
+**Prioridad:** Should
+**Requisito relacionado:** RF-67
+
+### Historia de usuario
+
+> Como administrador,
+> quiero registrar una incidencia relacionada con un equipo,
+> para mantener un registro de los problemas detectados.
+
+### Criterios de aceptación
+
+* El administrador puede seleccionar el equipo afectado.
+* Puede describir la incidencia.
+* Puede registrar el tipo correspondiente.
+* La incidencia queda asociada al equipo.
+
+---
+
+## HU-05 — Registrar un mantenimiento
+
+**Prioridad:** Should
+**Requisito relacionado:** RF-67
+
+### Historia de usuario
+
+> Como administrador,
+> quiero registrar los mantenimientos realizados sobre los equipos,
+> para mantener un historial de mantenimiento.
+
+### Criterios de aceptación
+
+* El mantenimiento queda asociado al equipo.
+* Se registra la información correspondiente.
+* El historial permite identificar que se ha realizado un mantenimiento.

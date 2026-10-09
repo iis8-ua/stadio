@@ -12,6 +12,12 @@ entity "users" as users {
   email : varchar UNIQUE
   hash_contrasena : varchar
   telefono : varchar
+  avatar : text
+  sexo : varchar
+  fecha_nacimiento : date
+  direccion : varchar
+  ciudad : varchar
+  codigo_postal : varchar
   rol : enum <Rol>
   estado : enum <EstadoUsuario>
   fecha_alta : date
@@ -22,18 +28,101 @@ entity "clientes" as clientes {
   * id : bigint PK
   ---
   user_id : bigint FK
-  fecha_nacimiento : date
   objetivo : varchar
   peso : decimal
+  peso_objetivo : decimal
+  frecuencia : varchar
+  progreso : int
+}
+
+entity "empleados" as empleados {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  roles : varchar
+  horario_semanal : text
+  disponibilidad : text
+  salario_tipo : enum <TipoSalario>
+  salario : decimal
 }
 
 entity "entrenadores" as entrenadores {
   * id : bigint PK
   ---
-  user_id : bigint FK
+  empleado_id : bigint FK
   especialidad : varchar
-  horario_semanal : text
-  disponibilidad : text
+}
+
+entity "periodos_vacaciones" as vacaciones {
+  * id : bigint PK
+  ---
+  empleado_id : bigint FK
+  fecha_inicio : date
+  fecha_fin : date
+}
+
+entity "cuentas_bancarias" as cuentas {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  titular : varchar
+  iban : varchar
+  cobro_automatico : bool
+}
+
+' ---------- Configuración del gimnasio ----------
+entity "configuracion" as config {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  direccion : varchar
+  ciudad : varchar
+  telefono : varchar
+  capacidad : int
+  importe_cuota : decimal
+  dia_cobro : int
+  notif_recordatorio_cuota : bool
+  notif_recordatorio_clases : bool
+  notif_resumen_semanal : bool
+  notif_canal_email : bool
+  notif_canal_push : bool
+}
+
+entity "horarios_gimnasio" as horarios {
+  * id : bigint PK
+  ---
+  configuracion_id : bigint FK
+  dia_semana : int
+  hora_apertura : varchar
+  hora_cierre : varchar
+  cerrado : bool
+}
+
+entity "festivos" as festivos {
+  * id : bigint PK
+  ---
+  configuracion_id : bigint FK
+  fecha : date
+  hora_apertura : varchar
+  hora_cierre : varchar
+  cerrado : bool
+}
+
+' ---------- Roles y permisos ----------
+entity "permisos" as permisos {
+  * id : bigint PK
+  ---
+  codigo : varchar
+  nombre : varchar
+  descripcion : text
+  grupo : varchar
+}
+
+entity "rol_permiso" as rol_permiso {
+  * id : bigint PK
+  ---
+  rol : enum <Rol>
+  permiso_id : bigint FK
 }
 
 ' ---------- Rutinas y ejercicios ----------
@@ -101,6 +190,13 @@ entity "series" as series {
 }
 
 ' ---------- Clases y reservas ----------
+entity "tipos_clase" as tipos_clase {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  descripcion : text
+}
+
 entity "clases" as clases {
   * id : bigint PK
   ---
@@ -109,8 +205,16 @@ entity "clases" as clases {
   fecha_hora : datetime
   duracion : int
   capacidad : int
+  tipo_clase_id : bigint FK
   sala_id : bigint FK
   entrenador_id : bigint FK
+}
+
+entity "entrenador_tipo_clase" as ent_tipo {
+  * id : bigint PK
+  ---
+  entrenador_id : bigint FK
+  tipo_clase_id : bigint FK
 }
 
 entity "salas" as salas {
@@ -118,6 +222,7 @@ entity "salas" as salas {
   ---
   nombre : varchar
   capacidad : int
+  estado : enum <EstadoSala>
 }
 
 entity "reservas" as reservas {
@@ -194,6 +299,7 @@ entity "equipos" as equipos {
   ---
   sala_id : bigint FK
   nombre : varchar
+  tipo : varchar
   estado : enum <EstadoEquipo>
   fecha_ultimo_mantenimiento : date
 }
@@ -203,7 +309,9 @@ entity "incidencias" as incidencias {
   ---
   equipo_id : bigint FK
   reportado_por : bigint FK
+  titulo : varchar
   descripcion : text
+  ubicacion : varchar
   tipo : enum <TipoIncidencia>
   estado : varchar
   fecha : datetime
@@ -223,14 +331,24 @@ entity "notificaciones" as notif {
   * id : bigint PK
   ---
   user_id : bigint FK
+  titulo : varchar
   texto : varchar
+  detalle : text
+  tipo : enum <TipoNotificacion>
   leido : bool
   fecha : datetime
 }
 
 ' ---------- Relaciones ----------
 users ||--|| clientes : tiene (1:1)
-users ||--|| entrenadores : tiene (1:1)
+users ||--|| empleados : tiene (1:1)
+empleados ||--o| entrenadores : "es entrenador"
+empleados ||--o{ vacaciones : "disfruta"
+clientes ||--o| cuentas : "domicilia"
+
+config ||--o{ horarios : "define"
+config ||--o{ festivos : "define"
+permisos ||--o{ rol_permiso : "asignado a"
 
 entrenadores }o--|| rutinas : "crea"
 rutinas ||--o{ re : contiene
@@ -247,8 +365,11 @@ entrenamientos }o--|| rutinas : "sigue"
 series }o--|| entrenamientos : "pertenece"
 series }o--|| ejercicios : "sobre"
 
+tipos_clase ||--o{ clases : "categoriza"
 clases }o--|| entrenadores : "imparte"
 clases }o--|| salas : "en"
+entrenadores ||--o{ ent_tipo : "imparte"
+tipos_clase ||--o{ ent_tipo : "impartido por"
 mat_clase }o--|| clases : "material de"
 mat_clase }o--|| equipos : "equipo"
 act_entrenador }o--|| entrenadores : "de"
@@ -260,7 +381,7 @@ accesos }o--|| users : "de"
 cuotas }o--|| clientes : "de"
 
 equipos }o--|| salas : "en"
-incidencias }o--|| equipos : "sobre"
+incidencias }o--o| equipos : "sobre"
 incidencias }o--|| users : "reportada por"
 
 chatbot }o--|| clientes : "de"

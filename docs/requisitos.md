@@ -25,7 +25,7 @@ Documento de requisitos funcionales y no funcionales derivado de `docs/especific
 | RF-05 | Las rutas y el menú se restringen según el rol; un cliente no accede a rutas de entrenador o admin. | Must |
 | RF-06 | El usuario puede recuperar su contraseña por email. | Should |
 | RF-07 | El usuario puede cambiar su contraseña desde su perfil. | Should |
-| RF-08 | El usuario puede editar su perfil (nombre, teléfono, avatar, datos bancarios). | Should |
+| RF-08 | El usuario puede editar su perfil (nombre, teléfono, dirección, foto de perfil —subir o quitar—, datos bancarios). | Should |
 | RF-09 | La sesión expira tras un periodo de inactividad. | Should |
 
 ## 2. Gestión de clientes
@@ -111,7 +111,8 @@ Documento de requisitos funcionales y no funcionales derivado de `docs/especific
 | RF-51 | El cliente puede ver su historial de accesos (fecha, entrada, salida, duración). | Must |
 | RF-52 | El aforo en tiempo real muestra personas dentro, capacidad y porcentaje de ocupación. | Must |
 | RF-53 | Un acceso sin salida registrada se muestra como "salida no registrada" (sin inventar datos). | Should |
-| RF-54 | El administrador puede registrar manualmente un acceso. | Could |
+
+> Nota: el acceso al gimnasio es **exclusivamente con la pulsera NFC** leída en el torno (pulsera = torno). **No existe registro manual** de accesos. El campo `metodo` se mantiene por si en el futuro se incorpora otro método.
 
 ## 10. Cuotas y pagos
 
