@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-stadio-red: #d71920;
+  --color-stadio-white: #ffffff;
+  --color-stadio-black: #111111;
+  --color-stadio-gray-light: #f5f5f5;
+  --color-stadio-gray: #8a8a8a;
+  --color-stadio-gray-dark: #585858;
+  --color-stadio-green: #16a34a;
+  --color-stadio-green-bg: #dcfce7;
+  --color-stadio-amber: #f59e0b;
+  --color-stadio-amber-bg: #fef3c7;
+  --color-stadio-blue: #2563eb;
+  --color-stadio-blue-bg: #dbeafe;
+}
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Foco visible para navegación por teclado (accesibilidad) */
+:where(a, button, [role="button"], [href], [tabindex]):focus-visible {
+  outline: 2px solid var(--color-stadio-red);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
