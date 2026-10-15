@@ -1,0 +1,39 @@
+@startuml
+' === STADIO - Secuencia: Acceso NFC y aforo en tiempo real ===
+skinparam defaultFontName "Arial"
+autonumber
+
+actor "Cliente" as C
+participant "Torno NFC" as Torno
+participant "API" as API
+database "MySQL" as DB
+actor "Administrador" as Admin
+participant "Front (admin)" as ASPA
+
+C -> Torno : pasa la pulsera
+Torno -> API : POST /dispositivos/eventos\n{ identificador_pulsera, tipo }\n(token de Dispositivo · ability acceso:registrar)
+activate API
+API -> DB : buscar usuario por pulsera
+activate DB
+DB --> API : usuario (o no encontrado)
+deactivate DB
+
+alt Pulsera reconocida
+  API -> DB : registrar acceso (entrada/salida)
+  DB --> API : OK
+  API --> Torno : 202 (permitir paso)
+else Pulsera no reconocida
+  API --> Torno : 404 (denegar paso)
+end
+deactivate API
+
+Admin -> ASPA : ver aforo
+ASPA -> API : GET /aforo
+activate API
+API -> DB : contar entradas - salidas
+DB --> API : dentro / capacidad
+API --> ASPA : 200 { dentro, capacidad, ocupacion }
+deactivate API
+ASPA --> Admin : aforo en tiempo real
+
+@enduml

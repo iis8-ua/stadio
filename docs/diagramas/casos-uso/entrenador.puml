@@ -1,0 +1,65 @@
+@startuml
+' === STADIO - Casos de uso: ENTRENADOR (dos perfiles) ===
+left to right direction
+skinparam actorStyle awesome
+skinparam defaultFontName "Arial"
+
+actor "Entrenador personal" as PT
+actor "Monitor / instructor" as Mon
+
+rectangle "STADIO" {
+  usecase "Iniciar sesión" as UC_Login
+  usecase "Ver dashboard" as UC_Dash
+  usecase "Consultar clientes asignados" as UC_Clientes
+  usecase "Ver ficha de cliente" as UC_Ficha
+  usecase "Crear rutina" as UC_CrearR
+  usecase "Editar rutina" as UC_EditarR
+  usecase "Planificar rutinas por días" as UC_Asignar
+  usecase "Buscar ejercicio" as UC_Buscar
+  usecase "Consultar biblioteca de ejercicios" as UC_Biblioteca
+  usecase "Ver clases del día" as UC_Clases
+  usecase "Ver asistentes de la clase" as UC_Asistentes
+  usecase "Editar materiales de clase" as UC_Mat
+  usecase "Ver agenda semanal" as UC_Horario
+  usecase "Ver análisis y coaching" as UC_IA
+  usecase "Recibir notificaciones" as UC_Notif
+  usecase "Editar perfil" as UC_Perfil
+}
+
+' --- Perfil: entrenador personal (clientes y rutinas) ---
+PT --> UC_Login
+PT --> UC_Dash
+PT --> UC_Clientes
+PT --> UC_Ficha
+PT --> UC_CrearR
+PT --> UC_EditarR
+PT --> UC_Asignar
+PT --> UC_Buscar
+PT --> UC_Biblioteca
+PT --> UC_Horario
+PT --> UC_IA
+PT --> UC_Notif
+PT --> UC_Perfil
+
+' --- Perfil: monitor / instructor (clases y materiales) ---
+Mon --> UC_Login
+Mon --> UC_Dash
+Mon --> UC_Clases
+Mon --> UC_Asistentes
+Mon --> UC_Mat
+Mon --> UC_Horario
+Mon --> UC_IA
+Mon --> UC_Notif
+Mon --> UC_Perfil
+
+' Relaciones include
+UC_Dash .> UC_Login : <<include>>
+UC_Ficha .> UC_Clientes : <<include>>
+UC_Asignar .> UC_Clientes : <<include>>
+UC_CrearR .> UC_Buscar : <<include>>
+UC_EditarR .> UC_Buscar : <<include>>
+UC_Asignar .> UC_CrearR : <<include>>
+UC_Mat .> UC_Clases : <<include>>
+UC_Asistentes .> UC_Clases : <<include>>
+
+@enduml

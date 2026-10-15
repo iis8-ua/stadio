@@ -1,0 +1,37 @@
+@startuml
+' === STADIO - Secuencia: Pago de cuota con Stripe ===
+skinparam defaultFontName "Arial"
+autonumber
+
+actor "Cliente" as C
+participant "Front" as SPA
+participant "API" as API
+database "MySQL" as DB
+participant "Stripe" as Stripe
+
+C -> SPA : pagar cuota (tarjeta o domiciliación)
+SPA -> API : POST /cuotas/{id}/pagar { metodo }
+activate API
+
+alt metodo = tarjeta
+  API -> Stripe : crear sesión de pago (Checkout)
+  Stripe --> API : checkout_url
+  API --> SPA : 200 { checkout_url }
+  SPA --> C : redirige a la pasarela
+  C -> Stripe : introduce los datos y paga
+else metodo = domiciliacion
+  API -> Stripe : iniciar cobro SEPA (cuenta del cliente)
+  Stripe --> API : cobro en proceso
+  API --> SPA : 202 (cobro en proceso)
+end
+deactivate API
+
+Stripe -> API : POST /webhooks/stripe (pago confirmado)
+activate API
+API -> DB : actualizar cuota = pagada (idempotente)
+DB --> API : OK
+API -> API : notificar al cliente (correo/push)
+API --> Stripe : 200 recibido
+deactivate API
+
+@enduml

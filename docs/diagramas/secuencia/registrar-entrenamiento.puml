@@ -1,0 +1,39 @@
+@startuml
+' === STADIO - Secuencia: Registrar un entrenamiento ===
+skinparam defaultFontName "Arial"
+autonumber
+
+actor "Cliente" as C
+participant "Front" as SPA
+participant "API" as API
+database "MySQL" as DB
+
+C -> SPA : empezar entrenamiento
+SPA -> API : POST /entrenamientos { rutina_id }
+activate API
+API -> DB : crear entrenamiento (en curso)
+DB --> API : entrenamiento_id
+API --> SPA : 201 entrenamiento { id }
+deactivate API
+
+loop Por cada serie
+  C -> SPA : registrar serie (peso, reps, descanso, RIR/RPE)
+  SPA -> API : POST /entrenamientos/{id}/series
+  activate API
+  API -> DB : INSERT serie (pertenece al entrenamiento del cliente)
+  DB --> API : OK
+  API --> SPA : 201 serie
+  deactivate API
+  SPA --> C : serie registrada
+end
+
+C -> SPA : finalizar entrenamiento
+SPA -> API : PATCH /entrenamientos/{id} (finalizado)
+activate API
+API -> DB : calcular volumen y marcar finalizado
+DB --> API : resumen
+API --> SPA : 200 resumen (volumen, series, duración)
+deactivate API
+SPA --> C : resumen final
+
+@enduml

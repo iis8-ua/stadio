@@ -1,0 +1,23 @@
+@startuml
+' === STADIO - Secuencia: Importación del catálogo de ejercicios (wger) ===
+skinparam defaultFontName "Arial"
+autonumber
+
+participant "Comando artisan" as CMD
+participant "Importador" as IMP
+participant "API wger" as WGER
+database "MySQL" as DB
+participant "Storage (imágenes)" as FS
+
+CMD -> IMP : ejercicios:import
+activate IMP
+IMP -> WGER : GET /exerciseinfo (paginado)
+WGER --> IMP : ejercicios (es/en, músculos, equipos, imágenes)
+IMP -> FS : descargar y guardar imágenes
+FS --> IMP : rutas locales
+IMP -> DB : upsert por id_externo (idempotente)
+DB --> IMP : OK
+IMP --> CMD : nº importados / incidencias
+deactivate IMP
+
+@enduml

@@ -1,0 +1,458 @@
+@startuml
+' === STADIO - Diagrama de clases (dominio) ===
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam defaultFontName "Arial"
+skinparam classFontSize 12
+
+' ---------- Enumerados ----------
+enum Rol {
+  CLIENTE
+  ENTRENADOR
+  ADMINISTRADOR
+}
+enum RolEmpleado {
+  ENTRENADOR
+  MONITOR
+  INSTRUCTOR
+  PERSONAL
+  RECEPCION
+  LIMPIEZA
+}
+enum TipoSalario {
+  MENSUAL
+  POR_HORAS
+}
+enum EstadoUsuario {
+  ACTIVO
+  DESACTIVADO
+}
+enum EstadoReserva {
+  CONFIRMADA
+  PENDIENTE
+  CANCELADA
+  FINALIZADA
+}
+enum EstadoEntrenamiento {
+  EN_CURSO
+  FINALIZADO
+}
+enum TipoAcceso {
+  ENTRADA
+  SALIDA
+}
+enum MetodoAcceso {
+  PULSERA_NFC
+}
+note right of MetodoAcceso
+  El acceso es solo con la pulsera NFC
+  leída en el torno (pulsera = torno).
+  No hay acceso manual. El campo se
+  mantiene por si se añade otro método.
+end note
+enum EstadoCuota {
+  PAGADA
+  PENDIENTE
+}
+enum MetodoPago {
+  TARJETA
+  DOMICILIACION
+}
+enum EstadoEquipo {
+  DISPONIBLE
+  MANTENIMIENTO
+  FUERA_DE_SERVICIO
+}
+enum EstadoSala {
+  DISPONIBLE
+  NO_DISPONIBLE
+}
+enum TipoIncidencia {
+  MANTENIMIENTO
+  INCIDENCIA
+}
+enum EstadoAsignacionEntrenador {
+  SOLICITADA
+  ASIGNADA
+  FINALIZADA
+}
+enum TipoNotificacion {
+  INFO
+  AVISO
+  EXITO
+  ERROR
+}
+enum Sexo {
+  HOMBRE
+  MUJER
+}
+enum EstadoIncidencia {
+  ABIERTA
+  EN_PROCESO
+  RESUELTA
+}
+
+' ---------- Usuarios ----------
+class Usuario {
+  - id : Long
+  - nombre : String
+  - email : String
+  - hashContrasena : String
+  - emailVerificado : boolean
+  - dosFactores : boolean
+  - telefono : String
+  - avatar : String
+  - sexo : Sexo
+  - fechaNacimiento : Date
+  - direccion : String
+  - ciudad : String
+  - codigoPostal : String
+  - rol : Rol
+  - estado : EstadoUsuario
+  - fechaAlta : Date
+  - identificadorPulsera : String
+}
+
+class Cliente {
+  - id : Long
+  - objetivo : String
+  - peso : Double
+  - pesoObjetivo : Double
+  - frecuencia : String
+  - progreso : int
+}
+
+class Empleado {
+  - id : Long
+  - horarioSemanal : String
+  - disponibilidad : String
+  - salarioTipo : TipoSalario
+  - salario : Double
+}
+
+class Entrenador {
+  - id : Long
+  - especialidad : String
+}
+
+class Monitor {
+  - id : Long
+}
+
+class EmpleadoRol {
+  - id : Long
+  - rol : RolEmpleado
+}
+
+class PeriodoVacaciones {
+  - id : Long
+  - fechaInicio : Date
+  - fechaFin : Date
+}
+
+class CuentaBancaria {
+  - id : Long
+  - titular : String
+  - iban : String
+  - cobroAutomatico : boolean
+}
+
+note top of Usuario
+  El rol ADMINISTRADOR no requiere clase propia:
+  gestiona todos los módulos y da de alta a
+  clientes y empleados (RF-04).
+end note
+
+' ---------- Configuración del gimnasio ----------
+class Configuracion {
+  - id : Long
+  - nombre : String
+  - direccion : String
+  - ciudad : String
+  - telefono : String
+  - capacidad : int
+  - importeCuota : Double
+  - diaCobro : int
+  - notifRecordatorioCuota : boolean
+  - notifRecordatorioClases : boolean
+  - notifResumenSemanal : boolean
+  - notifCanalEmail : boolean
+  - notifCanalPush : boolean
+}
+
+class HorarioGimnasio {
+  - id : Long
+  - diaSemana : int
+  - horaApertura : String
+  - horaCierre : String
+  - cerrado : boolean
+}
+
+class Festivo {
+  - id : Long
+  - fecha : Date
+  - horaApertura : String
+  - horaCierre : String
+  - cerrado : boolean
+}
+
+' ---------- Roles y permisos ----------
+class Permiso {
+  - id : Long
+  - codigo : String
+  - nombre : String
+  - descripcion : String
+  - grupo : String
+}
+
+class RolPermiso {
+  - id : Long
+  - rol : Rol
+}
+
+' ---------- Rutinas y ejercicios ----------
+class Rutina {
+  - id : Long
+  - nombre : String
+  - objetivo : String
+  - diasSemana : int
+}
+
+class Ejercicio {
+  - id : Long
+  - nombre : String
+  - grupoMuscular : String
+  - descripcion : String
+  - instrucciones : String
+  - equipamiento : String
+  - imagen : String
+  - idExterno : String
+}
+
+class RutinaEjercicio {
+  - id : Long
+  - notas : String
+}
+
+class RutinaSerie {
+  - id : Long
+  - numeroSerie : int
+  - peso : Double
+  - repeticiones : int
+  - descanso : int
+  - rir : int
+  - rpe : int
+}
+
+' ---------- Entrenamiento ----------
+class Entrenamiento {
+  - id : Long
+  - fecha : LocalDateTime
+  - duracion : int
+  - estado : EstadoEntrenamiento
+  - volumenTotal : Double
+  - calorias : int
+}
+
+class Serie {
+  - id : Long
+  - numeroSerie : int
+  - peso : Double
+  - repeticiones : int
+  - rir : int
+  - rpe : int
+  - descanso : int
+  - notas : String
+}
+
+' ---------- Clases y reservas ----------
+class TipoClase {
+  - id : Long
+  - nombre : String
+  - descripcion : String
+}
+
+class Clase {
+  - id : Long
+  - nombre : String
+  - descripcion : String
+  - fechaHora : LocalDateTime
+  - duracion : int
+  - capacidad : int
+}
+
+class MonitorTipoClase {
+  - id : Long
+}
+
+class Sala {
+  - id : Long
+  - nombre : String
+  - capacidad : int
+  - estado : EstadoSala
+}
+
+class Reserva {
+  - id : Long
+  - fechaReserva : LocalDateTime
+  - estado : EstadoReserva
+}
+
+' ---------- Accesos ----------
+class Acceso {
+  - id : Long
+  - timestamp : LocalDateTime
+  - tipo : TipoAcceso
+  - metodo : MetodoAcceso
+}
+
+' ---------- Cuotas y pagos ----------
+class Cuota {
+  - id : Long
+  - periodo : String
+  - importe : Double
+  - estado : EstadoCuota
+  - fechaPago : Date
+  - metodo : MetodoPago
+  - refTransaccion : String
+}
+
+' ---------- Instalaciones ----------
+class Equipo {
+  - id : Long
+  - nombre : String
+  - tipo : String
+  - estado : EstadoEquipo
+  - fechaUltimoMantenimiento : Date
+}
+
+class Incidencia {
+  - id : Long
+  - titulo : String
+  - descripcion : String
+  - ubicacion : String
+  - tipo : TipoIncidencia
+  - estado : EstadoIncidencia
+  - fecha : LocalDateTime
+}
+
+' ---------- Chatbot y notificaciones ----------
+class MensajeChatbot {
+  - id : Long
+  - textoUsuario : String
+  - textoRespuesta : String
+  - fecha : LocalDateTime
+}
+
+class Notificacion {
+  - id : Long
+  - titulo : String
+  - texto : String
+  - detalle : String
+  - tipo : TipoNotificacion
+  - leido : boolean
+  - fecha : LocalDateTime
+}
+
+' ---------- Asignaciones y agenda ----------
+class AsignacionRutina {
+  - id : Long
+  - fecha : Date
+}
+
+class AsignacionEntrenador {
+  - id : Long
+  - estado : EstadoAsignacionEntrenador
+  - fechaSolicitud : Date
+  - fechaAsignacion : Date
+}
+
+class MaterialClase {
+  - id : Long
+}
+
+class ActividadEntrenador {
+  - id : Long
+  - fecha : Date
+  - horaInicio : String
+  - horaFin : String
+  - titulo : String
+}
+
+' ---------- Dispositivos ----------
+class Dispositivo {
+  - id : Long
+  - nombre : String
+  - ubicacion : String
+  - activo : boolean
+  - ultimaConexion : LocalDateTime
+}
+
+note right of Dispositivo
+  Cada torno/NFC se autentica con un token de
+  Sanctum asociado al Dispositivo (no a un Usuario),
+  con ability acceso:registrar. Un Dispositivo puede
+  emitir eventos de paso hacia Acceso.
+end note
+
+' ---------- Relaciones ----------
+Cliente "0..1" --> "1" Usuario : usuario
+Empleado "0..1" --> "1" Usuario : usuario
+Empleado "1" -- "0..*" EmpleadoRol : roles
+Entrenador "0..1" --> "1" Empleado : empleado
+Monitor "0..1" --> "1" Empleado : empleado
+PeriodoVacaciones "0..*" --> "1" Empleado : empleado
+CuentaBancaria "0..1" --> "1" Cliente : titular
+
+Configuracion "1" -- "0..7" HorarioGimnasio : horario
+Configuracion "1" -- "0..*" Festivo : festivos
+RolPermiso "0..*" --> "1" Permiso : permiso
+
+Rutina "0..*" <-- "0..1" Entrenador : creadaPor
+Rutina "0..*" -- "0..1" Cliente : propia
+Rutina "1" -- "0..*" RutinaEjercicio : contiene
+Ejercicio "1" -- "0..*" RutinaEjercicio : asocia
+RutinaEjercicio "1" -- "0..*" RutinaSerie : series
+
+AsignacionRutina "0..*" --> "1" Cliente : cliente
+AsignacionRutina "0..*" --> "1" Rutina : rutina
+AsignacionEntrenador "0..*" --> "1" Cliente : cliente
+AsignacionEntrenador "0..*" --> "1" Entrenador : entrenador
+
+Entrenamiento "0..*" --> "1" Cliente : cliente
+Entrenamiento "0..*" --> "1" Rutina : rutina
+Serie "0..*" --> "1" Entrenamiento : entrenamiento
+Serie "0..*" --> "1" Ejercicio : ejercicio
+
+TipoClase "1" -- "0..*" Clase : tipo
+Clase "0..*" --> "1" Sala : sala
+Clase "0..*" --> "1" Monitor : imparte
+MonitorTipoClase "0..*" --> "1" Monitor : monitor
+MonitorTipoClase "0..*" --> "1" TipoClase : tipoClase
+Clase "1" -- "0..*" MaterialClase : materiales
+Equipo "1" -- "0..*" MaterialClase : usadoEn
+Reserva "0..*" --> "1" Cliente : cliente
+Reserva "0..*" --> "1" Clase : clase
+
+ActividadEntrenador "0..*" --> "1" Entrenador : entrenador
+ActividadEntrenador "0..*" --> "0..1" Sala : sala
+
+Acceso "0..*" --> "1" Usuario : usuario
+
+Cuota "0..*" --> "1" Cliente : cliente
+
+Equipo "0..*" --> "1" Sala : sala
+Incidencia "0..*" --> "0..1" Equipo : equipo
+Incidencia "0..*" --> "1" Usuario : reportadaPor
+
+MensajeChatbot "0..*" --> "1" Cliente : cliente
+Notificacion "0..*" --> "1" Usuario : destinatario
+
+note as N_Anemico
+  Modelo de dominio anémico: las entidades
+  solo tienen datos y relaciones. La lógica
+  de negocio reside en la capa de servicios
+  (ver docs/arquitectura.md).
+end note
+
+@enduml

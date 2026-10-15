@@ -1,0 +1,445 @@
+@startuml
+' === STADIO - Diagrama entidad-relación ===
+left to right direction
+skinparam defaultFontName "Arial"
+skinparam linetype ortho
+
+' ---------- Usuarios ----------
+entity "users" as users {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  email : varchar UNIQUE
+  hash_contrasena : varchar
+  email_verified_at : datetime
+  two_factor_secret : text
+  two_factor_recovery_codes : text
+  two_factor_confirmed_at : datetime
+  telefono : varchar
+  avatar : text
+  sexo : enum <Sexo>
+  fecha_nacimiento : date
+  direccion : varchar
+  ciudad : varchar
+  codigo_postal : varchar
+  rol : enum <Rol>
+  estado : enum <EstadoUsuario>
+  fecha_alta : date
+  identificador_pulsera : varchar UNIQUE
+}
+
+entity "clientes" as clientes {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  objetivo : varchar
+  peso : decimal
+  peso_objetivo : decimal
+  frecuencia : varchar
+  progreso : int
+}
+
+entity "empleados" as empleados {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  horario_semanal : text
+  disponibilidad : text
+  salario_tipo : enum <TipoSalario>
+  salario : decimal
+}
+
+entity "empleado_rol" as empleado_rol {
+  * id : bigint PK
+  ---
+  empleado_id : bigint FK
+  rol : enum <RolEmpleado>
+}
+
+entity "entrenadores" as entrenadores {
+  * id : bigint PK
+  ---
+  empleado_id : bigint FK
+  especialidad : varchar
+}
+
+entity "monitores" as monitores {
+  * id : bigint PK
+  ---
+  empleado_id : bigint FK
+}
+
+entity "periodos_vacaciones" as vacaciones {
+  * id : bigint PK
+  ---
+  empleado_id : bigint FK
+  fecha_inicio : date
+  fecha_fin : date
+}
+
+entity "cuentas_bancarias" as cuentas {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  titular : varchar
+  iban : varchar
+  cobro_automatico : bool
+}
+
+' ---------- Configuración del gimnasio ----------
+entity "configuracion" as config {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  direccion : varchar
+  ciudad : varchar
+  telefono : varchar
+  capacidad : int
+  importe_cuota : decimal
+  dia_cobro : int
+  notif_recordatorio_cuota : bool
+  notif_recordatorio_clases : bool
+  notif_resumen_semanal : bool
+  notif_canal_email : bool
+  notif_canal_push : bool
+}
+
+entity "horarios_gimnasio" as horarios {
+  * id : bigint PK
+  ---
+  configuracion_id : bigint FK
+  dia_semana : int
+  hora_apertura : varchar
+  hora_cierre : varchar
+  cerrado : bool
+}
+
+entity "festivos" as festivos {
+  * id : bigint PK
+  ---
+  configuracion_id : bigint FK
+  fecha : date
+  hora_apertura : varchar
+  hora_cierre : varchar
+  cerrado : bool
+}
+
+' ---------- Roles y permisos ----------
+entity "permisos" as permisos {
+  * id : bigint PK
+  ---
+  codigo : varchar
+  nombre : varchar
+  descripcion : text
+  grupo : varchar
+}
+
+entity "rol_permiso" as rol_permiso {
+  * id : bigint PK
+  ---
+  rol : enum <Rol>
+  permiso_id : bigint FK
+}
+
+' ---------- Rutinas y ejercicios ----------
+entity "rutinas" as rutinas {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  objetivo : varchar
+  dias_semana : int
+  entrenador_id : bigint FK
+  cliente_id : bigint FK
+}
+
+entity "ejercicios" as ejercicios {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  grupo_muscular : varchar
+  descripcion : text
+  instrucciones : text
+  equipamiento : varchar
+  imagen : varchar
+  id_externo : varchar UNIQUE
+}
+
+entity "rutina_ejercicio" as re {
+  * id : bigint PK
+  ---
+  rutina_id : bigint FK
+  ejercicio_id : bigint FK
+  notas : text
+}
+
+entity "rutina_series" as rserie {
+  * id : bigint PK
+  ---
+  rutina_ejercicio_id : bigint FK
+  numero_serie : int
+  peso : decimal
+  repeticiones : int
+  descanso : int
+  rir : int
+  rpe : int
+}
+
+' ---------- Entrenamientos ----------
+entity "entrenamientos" as ent {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  rutina_id : bigint FK
+  fecha : datetime
+  duracion : int
+  estado : enum <EstadoEntrenamiento>
+  volumen_total : decimal
+  calorias : int
+}
+
+entity "series" as series {
+  * id : bigint PK
+  ---
+  entrenamiento_id : bigint FK
+  ejercicio_id : bigint FK
+  numero_serie : int
+  peso : decimal
+  repeticiones : int
+  rir : int
+  rpe : int
+  descanso : int
+  notas : text
+}
+
+' ---------- Clases y reservas ----------
+entity "tipos_clase" as tipos_clase {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  descripcion : text
+}
+
+entity "clases" as clases {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  descripcion : text
+  fecha_hora : datetime
+  duracion : int
+  capacidad : int
+  tipo_clase_id : bigint FK
+  sala_id : bigint FK
+  monitor_id : bigint FK
+}
+
+entity "monitor_tipo_clase" as mon_tipo {
+  * id : bigint PK
+  ---
+  monitor_id : bigint FK
+  tipo_clase_id : bigint FK
+}
+
+entity "salas" as salas {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  capacidad : int
+  estado : enum <EstadoSala>
+}
+
+entity "reservas" as reservas {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  clase_id : bigint FK
+  fecha_reserva : datetime
+  estado : enum <EstadoReserva>
+}
+
+' ---------- Asignaciones y agenda ----------
+entity "asignaciones_rutina" as asig_rutina {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  rutina_id : bigint FK
+  fecha : date
+}
+
+entity "asignaciones_entrenador" as asig_entrenador {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  entrenador_id : bigint FK
+  estado : enum <EstadoAsignacionEntrenador>
+  fecha_solicitud : date
+  fecha_asignacion : date
+}
+
+entity "materiales_clase" as mat_clase {
+  * id : bigint PK
+  ---
+  clase_id : bigint FK
+  equipo_id : bigint FK
+}
+
+entity "actividades_entrenador" as act_entrenador {
+  * id : bigint PK
+  ---
+  entrenador_id : bigint FK
+  sala_id : bigint FK
+  fecha : date
+  hora_inicio : varchar
+  hora_fin : varchar
+  titulo : varchar
+}
+
+' ---------- Accesos y cuotas ----------
+entity "accesos" as accesos {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  timestamp : datetime
+  tipo : enum <TipoAcceso>
+  metodo : enum <MetodoAcceso>
+}
+
+entity "cuotas" as cuotas {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  periodo : varchar
+  importe : decimal
+  estado : enum <EstadoCuota>
+  fecha_pago : date
+  metodo : enum <MetodoPago>
+  ref_transaccion : varchar
+}
+
+' ---------- Dispositivos ----------
+entity "dispositivos" as dispositivos {
+  * id : bigint PK
+  ---
+  nombre : varchar
+  ubicacion : varchar
+  activo : bool
+  ultima_conexion : datetime
+}
+
+entity "personal_access_tokens" as tokens {
+  * id : bigint PK
+  ---
+  tokenable_type : varchar
+  tokenable_id : bigint
+  name : varchar
+  token : varchar UNIQUE
+  abilities : text
+  expires_at : datetime
+  last_used_at : datetime
+}
+
+note bottom of tokens
+  Token de Sanctum (polimórfico). Los tornos/NFC
+  se autentican con un token asociado a un
+  Dispositivo (abilities mínimo: acceso:registrar).
+end note
+
+' ---------- Instalaciones ----------
+entity "equipos" as equipos {
+  * id : bigint PK
+  ---
+  sala_id : bigint FK
+  nombre : varchar
+  tipo : varchar
+  estado : enum <EstadoEquipo>
+  fecha_ultimo_mantenimiento : date
+}
+
+entity "incidencias" as incidencias {
+  * id : bigint PK
+  ---
+  equipo_id : bigint FK
+  reportado_por : bigint FK
+  titulo : varchar
+  descripcion : text
+  ubicacion : varchar
+  tipo : enum <TipoIncidencia>
+  estado : enum <EstadoIncidencia>
+  fecha : datetime
+}
+
+' ---------- IA y notificaciones ----------
+entity "mensajes_chatbot" as chatbot {
+  * id : bigint PK
+  ---
+  cliente_id : bigint FK
+  texto_usuario : text
+  texto_respuesta : text
+  fecha : datetime
+}
+
+entity "notificaciones" as notif {
+  * id : bigint PK
+  ---
+  user_id : bigint FK
+  titulo : varchar
+  texto : varchar
+  detalle : text
+  tipo : enum <TipoNotificacion>
+  leido : bool
+  fecha : datetime
+}
+
+' ---------- Relaciones ----------
+users ||--o| clientes : "tiene"
+users ||--o| empleados : "tiene"
+empleados ||--o{ empleado_rol : "tiene"
+empleados ||--o| entrenadores : "es entrenador"
+empleados ||--o| monitores : "es monitor"
+empleados ||--o{ vacaciones : "disfruta"
+clientes ||--o| cuentas : "domicilia"
+
+config ||--o{ horarios : "define (0..7, uno por día)"
+config ||--o{ festivos : "define"
+permisos ||--o{ rol_permiso : "asignado a"
+
+entrenadores }o--o| rutinas : "crea"
+rutinas }o--o| clientes : "propia"
+rutinas ||--o{ re : contiene
+ejercicios ||--o{ re : contiene
+re ||--o{ rserie : "define series"
+
+asig_rutina }o--|| clientes : "para"
+asig_rutina }o--|| rutinas : "de"
+asig_entrenador }o--|| clientes : "para"
+asig_entrenador }o--|| entrenadores : "de"
+
+entrenamientos }o--|| clientes : "de"
+entrenamientos }o--|| rutinas : "sigue"
+series }o--|| entrenamientos : "pertenece"
+series }o--|| ejercicios : "sobre"
+
+tipos_clase ||--o{ clases : "categoriza"
+clases }o--|| monitores : "imparte"
+clases }o--|| salas : "en"
+monitores ||--o{ mon_tipo : "imparte"
+tipos_clase ||--o{ mon_tipo : "impartido por"
+mat_clase }o--|| clases : "material de"
+mat_clase }o--|| equipos : "equipo"
+act_entrenador }o--|| entrenadores : "de"
+act_entrenador }o--o| salas : "en"
+reservas }o--|| clientes : "del"
+reservas }o--|| clases : "para"
+
+accesos }o--|| users : "de"
+cuotas }o--|| clientes : "de"
+
+equipos }o--|| salas : "en"
+incidencias }o--o| equipos : "sobre"
+incidencias }o--|| users : "reportada por"
+
+chatbot }o--|| clientes : "de"
+notif }o--|| users : "para"
+
+dispositivos ||--o{ tokens : "emite (tokenable)"
+
+@enduml

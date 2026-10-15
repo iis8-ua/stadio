@@ -1,0 +1,39 @@
+@startuml
+' === STADIO - Secuencia: Reservar una clase (control de aforo) ===
+skinparam defaultFontName "Arial"
+autonumber
+
+actor "Cliente" as C
+participant "Front" as SPA
+participant "API" as API
+database "MySQL" as DB
+
+C -> SPA : reservar clase
+SPA -> API : POST /reservas { clase_id }
+activate API
+
+alt Email no verificado
+  API --> SPA : 403 Verifica tu correo
+  SPA --> C : pide verificar el correo (RF-97)
+else Email verificado
+  API -> DB : comprobar plazas y duplicados (transacción)
+  activate DB
+  DB --> API : plazas ocupadas / reserva existente
+  deactivate DB
+
+  alt Clase completa
+    API --> SPA : 409 Clase completa
+    SPA --> C : "Clase completa"
+  else Reserva duplicada
+    API --> SPA : 409 Reserva duplicada
+    SPA --> C : aviso de reserva existente
+  else Hay plaza disponible
+    API -> DB : INSERT reserva (único cliente+clase)
+    DB --> API : OK
+    API --> SPA : 201 reserva confirmada
+    SPA --> C : confirmación
+  end
+end
+deactivate API
+
+@enduml

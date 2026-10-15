@@ -1,0 +1,39 @@
+@startuml
+' === STADIO - Secuencia: Inicio de sesión ===
+skinparam defaultFontName "Arial"
+autonumber
+
+actor "Usuario" as User
+participant "Front" as SPA
+participant "API" as API
+database "MySQL" as DB
+
+User -> SPA : email y contraseña
+SPA -> API : GET /sanctum/csrf-cookie
+API --> SPA : 204 (cookie XSRF-TOKEN)
+SPA -> API : POST /auth/login\n{ email, password } + X-XSRF-TOKEN
+activate API
+API -> DB : verificar credenciales
+activate DB
+DB --> API : usuario + rol + perfil
+deactivate DB
+
+alt Credenciales válidas
+  alt Administrador (2FA)
+    API --> SPA : 202 requiere segundo factor (TOTP)
+    SPA --> User : solicita código
+    User -> SPA : código TOTP / recuperación
+    SPA -> API : código + X-XSRF-TOKEN
+    API -> API : verificar TOTP
+  end
+  API -> API : abrir sesión (Sanctum)
+  API --> SPA : 200 { role, trainer_profile, user }\n+ cookie de sesión
+  SPA -> SPA : redirigir según rol/perfil
+  SPA --> User : acceso al espacio correspondiente
+else Credenciales inválidas
+  API --> SPA : 401 No autenticado
+  SPA --> User : mensaje de error
+end
+deactivate API
+
+@enduml
